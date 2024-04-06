@@ -23,6 +23,5 @@ export const step = ({ snake, apple, arena }) => {
 };
 
 export const face = (state, face) =>  {
-	console.log ({face})
 	return {...state, snake: {...state.snake, face}}
 }

@@ -15,8 +15,6 @@ onkeydown = (ev) => {
 
 	if (key in keymap)
 		state = face (state, keymap [key])
-
-	console.log (state)
 }
 
 
