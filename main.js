@@ -6,14 +6,14 @@ import { step, enqueue } from "./game.js"
 let state = defaults
 
 onkeydown = (ev) => {
-	const {key} = ev  
+	const {key, repeat} = ev  
 
 	if (key == ' ') {
 		state = step (state)
 		render (state)
 	}
 
-	if (key in keymap)
+	if (key in keymap && !repeat)
 		state = enqueue (state, keymap [key])
 }
 
