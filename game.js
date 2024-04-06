@@ -1,4 +1,4 @@
-export const step = ({ snake, apple, arena }) => {
+export const step = ({snake, apple, arena}) => {
 	const target = addVecs(snake.segments[0], snake.face);
 
 	const alive = snake.alive &&
