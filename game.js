@@ -1,5 +1,7 @@
-export const step = ({snake, apple, arena}) => {
-	const target = addVecs(snake.segments[0], snake.face);
+export const step = ({snake, apple, arena, queue}) => {
+	const face = queue.length ? queue [0] : snake.face
+
+	const target = addVecs(snake.segments[0], face);
 
 	const alive = snake.alive &&
 		target.every((pos, idx) => 0 <= pos && pos < arena[idx]) &&
@@ -15,13 +17,13 @@ export const step = ({snake, apple, arena}) => {
 		apple = arena.map(max => Math.floor(Math.random() * max));
 
 	return {
-		snake: { ...snake, segments, alive },
-		apple, arena
+		snake: { ...snake, segments, alive, face},
+		apple, arena, queue: queue.slice (1)
 	};
 };
 
-export const face = (state, face) =>  {
-	return {...state, snake: {...state.snake, face}}
+export const enqueue = (state, direction) => {
+	return {...state, queue: [...state.queue, direction]}
 }
 
 const addVecs = (...vectors) =>

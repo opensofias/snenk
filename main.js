@@ -1,7 +1,7 @@
 import { defaults } from "./default.js"
 import { keymap } from "./keymap.js"
 import { render } from "./render.js"
-import { step, face } from "./game.js"
+import { step, enqueue } from "./game.js"
 
 let state = defaults
 
@@ -14,7 +14,7 @@ onkeydown = (ev) => {
 	}
 
 	if (key in keymap)
-		state = face (state, keymap [key])
+		state = enqueue (state, keymap [key])
 }
 
 const loop = () => {

@@ -7,4 +7,5 @@ export const defaults = {
 	},
 	apple: [4, 0],
 	arena: [16, 16],
+	queue: [],
 }
