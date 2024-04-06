@@ -2,12 +2,10 @@ export const step = ({snake, apple, arena, queue}) => {
 	
 	if (snake.segments.length > 1 ) {
 		const neck = addVecs (snake.segments [1], ...negVecs(snake.segments [0]))
-		//console.log (neck.join (','))
 		while (queue.length && vecEq (queue [0], neck))
 		queue = queue.slice (1)
 	}
 	
-	//console.log (snake.segments.map (x => x.join (',')).join (' '))
 	const face = queue.length ? queue [0] : snake.face
 
 	const target = addVecs(snake.segments[0], face);
