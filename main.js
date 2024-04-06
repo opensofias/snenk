@@ -17,23 +17,6 @@ onkeydown = (ev) => {
 		state = face (state, keymap [key])
 }
 
-
-
-export const addVecs = (...vectors) =>
-	vectors.reduce (
-		(prev, cur) => prev.map ((val, idx) => val + cur[idx])
-		,
-		new Int8Array (Math.max(...vectors.map(x => x.length)))
-	)
-
-
-const negVecs = (...vectors) => vectors.map (x => x.map (x = 0 - x))
-
-
-export const vecEq = (vec1, vec2) =>
-	vec1.length == vec2.length &&
-	vec1.every ((val, idx) => val == vec2 [idx])
-
 const loop = () => {
 	state = step (state)
 	render (state)
