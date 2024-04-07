@@ -33,7 +33,7 @@ export const enqueue = (state, direction) => {
 	return {...state, queue: [...state.queue, direction]}
 }
 
-const addVecs = (...vectors) =>
+export const addVecs = (...vectors) =>
 	vectors.reduce (
 		(prev, cur) => prev.map ((val, idx) => val + cur[idx])
 		,

@@ -1,4 +1,5 @@
 import { defaults } from "./default.js"
+import { addVecs } from "./game.js"
 
 const canvas = document.createElement ('canvas')
 canvas.height = defaults.arena [0]
@@ -16,6 +17,16 @@ export const render = (state) => {
 	);
 	ctx.fillStyle = '#f00'
 	ctx.fillRect (...apple, 1, 1)
+
+	ctx.fillStyle = '#8f82'
+	
+	let queueMark = state.snake.segments [0]
+	state.queue.forEach (queued => {
+		queueMark = addVecs (queueMark, queued)
+		ctx.fillRect (...queueMark, 1, 1)
+	})
+
+
 	return state
 }
 
