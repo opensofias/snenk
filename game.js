@@ -41,7 +41,7 @@ export const addVecs = (...vectors) =>
 	)
 
 
-const negVecs = (...vectors) => vectors.map (v => v.map (n => 0 - n))
+export const negVecs = (...vectors) => vectors.map (v => v.map (n => 0 - n))
 
 const vecEq = (vec1, vec2) =>
 	vec1.length == vec2.length &&
