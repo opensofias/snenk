@@ -14,6 +14,8 @@ onkeydown = (ev) => {
 	if (key in keymap && !repeat)
 		state = enqueue (state, keymap [key])
 
+	if (key == 'Backspace')
+		state = {...state, queue: []}
 	render (state)
 }
 
