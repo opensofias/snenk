@@ -2,8 +2,8 @@ import { defaults } from "./default.js"
 import { addVecs } from "./game.js"
 
 const canvas = document.createElement ('canvas')
-canvas.height = defaults.arena [0]
-canvas.width = defaults.arena [1]
+canvas.height = defaults.arena [1]
+canvas.width = defaults.arena [0]
 document.body.appendChild (canvas)
 const ctx = canvas.getContext('2d')
 
