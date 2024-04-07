@@ -21,7 +21,7 @@ const loop = () => {
 	state = step (state)
 	render (state)
 
-	setTimeout (loop, 1000/4)
+	if (state.snake.alive) setTimeout (loop, 1000/4)
 }
 
 loop ()
