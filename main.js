@@ -8,13 +8,13 @@ let state = defaults
 onkeydown = (ev) => {
 	const {key, repeat} = ev  
 
-	if (key == ' ') {
+	if (key == ' ')
 		state = step (state)
-		render (state)
-	}
 
 	if (key in keymap && !repeat)
 		state = enqueue (state, keymap [key])
+
+	render (state)
 }
 
 const loop = () => {
