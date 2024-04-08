@@ -5,8 +5,9 @@ export const defaults = {
 		alive: true,
 		grow: 0,
 	},
-	apple: [4, 0],
+	apple: [3, 0],
 	arena: [16, 16],
 	queue: [],
 	pause: false,
+	win: false,
 }
