@@ -33,10 +33,10 @@ export const pointerListener = ev => {
 	const absDelta = deltaVec.map (x => Math.abs (x))
 	
 	const bigAxis = (absDelta [0] > absDelta [1]) ? 0 : 1
-	const pos = deltaVec [bigAxis] > 0
+	const positive = deltaVec [bigAxis] > 0
 	
-	for (let counter = 0 - (!pos); counter < absDelta [bigAxis]; counter ++) {
-		state = enqueue (state, bigAxis ? [0, pos ? 1 : -1] : [pos ? 1 : -1 ,0])
+	for (let counter = 0 - (!positive); counter < absDelta [bigAxis]; counter ++) {
+		state = enqueue (state, bigAxis ? [0, positive ? 1 : -1] : [positive ? 1 : -1 ,0])
 	}
 
 	render (state)
