@@ -6,7 +6,7 @@ import { step, enqueue, addVecs, negVecs } from "./game.js"
 let state = defaults
 
 onkeydown = (ev) => {
-	const {key, repeat} = ev  
+	const {key, repeat} = ev
 
 	if (key == ' ')
 		state = step (state)
@@ -16,6 +16,12 @@ onkeydown = (ev) => {
 
 	if (key == 'Backspace')
 		state = {...state, queue: []}
+
+	if (key == 'Enter') {
+		const {pause} = state
+		state.pause = !pause
+		if (pause) loop ()
+	}
 
 	render (state)
 }
@@ -45,6 +51,8 @@ export const pointerListener = ev => {
 canvas.onpointerdown = pointerListener
 
 const loop = () => {
+	if (state.pause) return;
+
 	state = step (state)
 	render (state)
 

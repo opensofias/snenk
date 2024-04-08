@@ -1,4 +1,5 @@
-export const step = ({snake, apple, arena, queue}) => {
+export const step = state => {
+	let {snake, apple, arena, queue} = state
 	
 	if (snake.segments.length > 1 ) {
 		const neck = addVecs (snake.segments [1], ...negVecs(snake.segments [0]))
@@ -24,8 +25,9 @@ export const step = ({snake, apple, arena, queue}) => {
 		apple = arena.map(max => Math.floor(Math.random() * max));
 
 	return {
+		...state,
 		snake: { ...snake, segments, alive, face},
-		apple, arena, queue: queue.slice (1)
+		apple, queue: queue.slice (1)
 	};
 };
 
