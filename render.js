@@ -1,4 +1,4 @@
-import { defaults } from "./default.js"
+import { defaults } from "./defaults.js"
 import { addVecs } from "./game.js"
 
 export const canvas = document.createElement ('canvas')

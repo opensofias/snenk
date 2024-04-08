@@ -1,4 +1,4 @@
-import { defaults } from "./default.js"
+import { defaults } from "./defaults.js"
 import { keymap } from "./keymap.js"
 import { canvas, render } from "./render.js"
 import { step, enqueue, addVecs, negVecs } from "./game.js"
