@@ -38,11 +38,11 @@ export const pointerListener = ev => {
 	const deltaVec = addVecs (...negVecs (queueTip), pointerVec)
 	const absDelta = deltaVec.map (x => Math.abs (x))
 	
-	const bigAxis = (absDelta [0] > absDelta [1]) ? 0 : 1
-	const positive = deltaVec [bigAxis] > 0
+	const axis = ((absDelta [0] < absDelta [1]) + (button == 1)) % 2
+	const positive = deltaVec [axis] > 0
 	
-	for (let counter = 0 - (!positive); counter < absDelta [bigAxis]; counter ++) {
-		state = enqueue (state, bigAxis ? [0, positive ? 1 : -1] : [positive ? 1 : -1 ,0])
+	for (let counter = 0 - (!positive); counter < absDelta [axis]; counter ++) {
+		state = enqueue (state, axis ? [0, positive ? 1 : -1] : [positive ? 1 : -1 ,0])
 	}
 
 	render (state)
