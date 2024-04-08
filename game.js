@@ -21,7 +21,9 @@ export const step = state => {
 		eaten ? [target, ...snake.segments] :
 			[target, ...snake.segments].slice(0, -1);
 
-	while (segments.some(seg => vecEq(seg, apple)))
+	if (segments.length == arena.reduce ((cur, pre) => cur * pre, 1))
+		state.win ||= (alert ('woah, nice!') || true)
+	else while (segments.some(seg => vecEq(seg, apple)))
 		apple = arena.map(max => Math.floor(Math.random() * max));
 
 	return {
