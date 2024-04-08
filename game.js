@@ -1,5 +1,5 @@
 export const step = state => {
-	let {snake, apple, arena, queue} = state
+	let {snake, apple, arena, queue, win} = state
 	
 	if (snake.segments.length > 1 ) {
 		const neck = addVecs (snake.segments [1], ...negVecs(snake.segments [0]))
@@ -22,14 +22,14 @@ export const step = state => {
 			[target, ...snake.segments].slice(0, -1);
 
 	if (segments.length == arena.reduce ((cur, pre) => cur * pre, 1))
-		state.win ||= (alert ('woah, nice!') || true)
+		win ||= (alert ('woah, nice!') || true)
 	else while (segments.some(seg => vecEq(seg, apple)))
 		apple = arena.map(max => Math.floor(Math.random() * max));
 
 	return {
-		...state,
+		...state, apple, win,
 		snake: { ...snake, segments, alive, face},
-		apple, queue: queue.slice (1)
+		queue: queue.slice (1)
 	};
 };
 
