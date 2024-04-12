@@ -20,9 +20,14 @@ onkeydown = ({key, repeat, shiftKey}) => {
 		state = {...state, queue: shiftKey ? [] : state.queue.slice (0, -1)}
 
 	if (key == 'Enter') {
-		const {pause} = state
-		state.pause = !pause
-		if (pause) loop ()
+		if (!state.snake.alive) {
+			state = defaults
+			loop ()
+		} else {
+			const {pause} = state
+			state.pause = !pause
+			if (pause) loop ()
+		}
 	}
 
 	render (state)
