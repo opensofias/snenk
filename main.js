@@ -38,7 +38,7 @@ export const pointerListener = ev => {
 	const deltaVec = addVecs (...negVecs (queueTip), pointerVec)
 	const absDelta = deltaVec.map (x => Math.abs (x))
 	
-	const axis = ((absDelta [0] < absDelta [1]) + (button == 1)) % 2
+	const axis = ((absDelta [0] < absDelta [1]) + (button == 1)) % 2 // middle mouse button means choosing the smaller axis
 	const positive = deltaVec [axis] > 0
 	
 	for (let counter = 0 - (!positive); counter < absDelta [axis]; counter ++) {
