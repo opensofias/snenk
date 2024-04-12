@@ -5,8 +5,7 @@ import { step, enqueue, addVecs, negVecs } from "./game.js"
 
 let state = defaults
 
-onkeydown = (ev) => {
-	const {key, repeat} = ev
+onkeydown = ({key, repeat}) => {
 
 	if (key == ' ')
 		state = step (state)
@@ -26,9 +25,9 @@ onkeydown = (ev) => {
 	render (state)
 }
 
-export const pointerListener = ev => {
-	const {target, button, x, y} = ev
-	const {clientWidth, clientHeight} = target
+export const pointerListener = ({
+	target: {clientWidth, clientHeight}, button, x, y
+}) => {
 	const {arena, queue, snake} = state
 	const queueTip = addVecs (snake.segments [0], ...queue)
 	const pointerVec = [

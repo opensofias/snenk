@@ -1,25 +1,25 @@
 export const step = state => {
-	let {snake, apple, arena, queue, win} = state
+	let {snake: {segments, face, alive}, apple, arena, queue, win} = state
 	
-	if (snake.segments.length > 1 ) {
-		const neck = addVecs (snake.segments [1], ...negVecs(snake.segments [0]))
+	if (segments.length > 1 ) {
+		const neck = addVecs (segments [1], ...negVecs(segments [0]))
 		while (queue.length && vecEq (queue [0], neck))
 		queue = queue.slice (1)
 	}
 	
-	const face = queue.length ? queue [0] : snake.face
+	face = queue.length ? queue [0] : face
 
-	const target = addVecs(snake.segments[0], face);
+	const target = addVecs(segments[0], face);
 
-	const alive = snake.alive &&
+	alive &&= 
 		target.every((pos, idx) => 0 <= pos && pos < arena[idx]) &&
-		snake.segments.every(seg => !vecEq(seg, target));
+		segments.every(seg => !vecEq(seg, target));
 
 	const eaten = alive && vecEq(target, apple);
 
-	const segments = (!alive) ? snake.segments :
-		eaten ? [target, ...snake.segments] :
-			[target, ...snake.segments].slice(0, -1);
+	segments = (!alive) ? segments :
+		eaten ? [target, ...segments] :
+			[target, ...segments].slice(0, -1);
 
 	if (segments.length == arena.reduce ((cur, pre) => cur * pre, 1))
 		win ||= (alert ('woah, nice!') || true)
@@ -28,7 +28,7 @@ export const step = state => {
 
 	return {
 		...state, apple, win,
-		snake: { ...snake, segments, alive, face},
+		snake: {segments, alive, face},
 		queue: queue.slice (1)
 	};
 };
