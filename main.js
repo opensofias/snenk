@@ -5,16 +5,19 @@ import { step, enqueue, addVecs, negVecs } from "./game.js"
 
 let state = defaults
 
-onkeydown = ({key, repeat}) => {
+onkeydown = ({key, repeat, shiftKey}) => {
 
 	if (key == ' ')
-		state = step (state)
+		if (shiftKey)
+			for ([] of state.queue) state = step (state)
+		else
+			state = step (state)
 
 	if (key in keymap && !repeat)
 		state = enqueue (state, keymap [key])
 
 	if (key == 'Backspace')
-		state = {...state, queue: []}
+		state = {...state, queue: shiftKey ? [] : state.queue.slice (0, -1)}
 
 	if (key == 'Enter') {
 		const {pause} = state
