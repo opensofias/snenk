@@ -5,10 +5,10 @@ import { step, enqueue, addVecs, negVecs } from "./game.js"
 
 let state = defaults
 
-onkeydown = ({key, repeat, shiftKey}) => {
+onkeydown = ({key, repeat, ctrlKey}) => {
 
 	if (key == ' ')
-		if (shiftKey)
+		if (ctrlKey)
 			for ([] of state.queue) state = step (state)
 		else
 			state = step (state)
@@ -17,7 +17,7 @@ onkeydown = ({key, repeat, shiftKey}) => {
 		state = enqueue (state, keymap [key])
 
 	if (key == 'Backspace')
-		state = {...state, queue: shiftKey ? [] : state.queue.slice (0, -1)}
+		state = {...state, queue: ctrlKey ? [] : state.queue.slice (0, -1)}
 
 	if (key == 'Enter') {
 		if (!state.snake.alive) {
