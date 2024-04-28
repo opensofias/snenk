@@ -11,10 +11,8 @@ onkeydown = ({key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
 	const repeat = shiftKey ? 4 : 1
 
 	if (key == ' ')
-		if (ctrlKey)
-			for ({} of state.queue) state = step (state)
-		else
-			for ({} of repeat) state = step (state)
+		for ({} of ctrlKey ? state.queue : repeat)
+			state = step (state)
 
 	if (key in keymap && !keyRepeat)
 		for ({} of repeat) state = enqueue (state, keymap [key])
