@@ -6,19 +6,21 @@ import {} from "https://opensofias.github.io/dimekit/dimekit.js"
 
 let state = defaults
 
-onkeydown = ({key, repeat, ctrlKey}) => {
+onkeydown = ({key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
+
+	const repeat = shiftKey ? 4 : 1
 
 	if (key == ' ')
 		if (ctrlKey)
-			for ([] of state.queue) state = step (state)
+			for ({} of state.queue) state = step (state)
 		else
-			state = step (state)
+			for ({} of repeat) state = step (state)
 
-	if (key in keymap && !repeat)
-		state = enqueue (state, keymap [key])
+	if (key in keymap && !keyRepeat)
+		for ({} of repeat) state = enqueue (state, keymap [key])
 
 	if (key == 'Backspace')
-		state = {...state, queue: ctrlKey ? [] : state.queue.slice (0, -1)}
+		state = {...state, queue: ctrlKey ? [] : state.queue.slice (0, -repeat)}
 
 	if (key == 'Enter') {
 		if (!state.snake.alive) {
