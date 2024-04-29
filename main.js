@@ -8,17 +8,17 @@ let state = defaults
 
 onkeydown = ({key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
 
-	const repeat = shiftKey ? 4 : 1
+	const boost = shiftKey ? 4 : 1
 
 	if (key == ' ')
-		for ({} of ctrlKey ? state.queue : repeat)
+		for ({} of ctrlKey ? state.queue : boost)
 			state = step (state)
 
 	if (key in keymap && !keyRepeat)
-		for ({} of repeat) state = enqueue (state, keymap [key])
+		for ({} of boost) state = enqueue (state, keymap [key])
 
 	if (key == 'Backspace')
-		state = {...state, queue: ctrlKey ? [] : state.queue.slice (0, -repeat)}
+		state = {...state, queue: ctrlKey ? [] : state.queue.slice (0, -boost)}
 
 	if (key == 'Enter') {
 		if (!state.snake.alive) {
