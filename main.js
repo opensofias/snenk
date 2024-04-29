@@ -49,9 +49,8 @@ export const pointerListener = ({
 	const axis = ((absDelta [0] < absDelta [1]) + (button == 1)) % 2 // middle mouse button means choosing the smaller axis
 	const positive = deltaVec [axis] > 0
 	
-	for (let counter = 0 - (!positive); counter < absDelta [axis]; counter ++) {
+	for ({} of absDelta [axis] + !positive)
 		state = enqueue (state, axis ? [0, positive ? 1 : -1] : [positive ? 1 : -1 ,0])
-	}
 
 	render (state)
 }
