@@ -1,8 +1,9 @@
 import { defaults } from "./defaults.js"
 import { keymap } from "./keymap.js"
 import { canvas, render } from "./render.js"
-import { step, enqueue, addVecs, negVecs } from "./game.js"
+import { step, enqueue } from "./game.js"
 import {} from "https://opensofias.github.io/dimekit/dimekit.js"
+import {} from "https://opensofias.github.io/dimekit/vectorOps.js"
 
 let state = defaults
 
