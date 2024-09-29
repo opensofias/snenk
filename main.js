@@ -39,12 +39,12 @@ export const pointerListener = ({
 	target: {clientWidth, clientHeight}, button, x, y
 }) => {
 	const {arena, queue, snake} = state
-	const queueTip = addVecs (snake.segments [0], ...queue)
+	const queueTip = snake.segments [0].add (...queue)
 	const pointerVec = [
 		x / clientWidth * arena [0],
 		y / clientHeight * arena [1],
 	]
-	const deltaVec = addVecs (...negVecs (queueTip), pointerVec)
+	const deltaVec = pointerVec.add(queueTip.sclMul (-1))
 	const absDelta = deltaVec.map (x => Math.abs (x))
 	
 	const axis = ((absDelta [0] < absDelta [1]) + (button == 1)) % 2 // middle mouse button means choosing the smaller axis
