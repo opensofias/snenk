@@ -34,5 +34,21 @@ export const step = state => {
 };
 
 export const enqueue = (state, direction) => {
-	return {...state, queue: [...state.queue, direction]}
+	let {queue} = state
+	
+	// Get the current tip of the queue (or snake face if queue is empty)
+	const queueTip = queue.length ? queue[queue.length - 1] : state.snake.face
+	
+	// Check if new direction is opposite to queue tip
+	const isOpposite = direction.every((val, idx) => val === -queueTip[idx])
+	
+	if (direction.eq (queueTip)) {
+		// Remove the tip instead of adding opposite direction
+		queue = queue.slice(0, -1)
+	} else {
+		// Add the new direction normally
+		queue = [...queue, direction]
+	}
+	
+	return {...state, queue}
 }
