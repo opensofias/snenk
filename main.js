@@ -44,7 +44,7 @@ export const pointerListener = ({
 		x / clientWidth * arena [0],
 		y / clientHeight * arena [1],
 	]
-	const deltaVec = pointerVec.add(queueTip.sclMul (-1))
+	const deltaVec = pointerVec.add (queueTip.sclMul (-1))
 	const absDelta = deltaVec.map (x => Math.abs (x))
 	
 	const axis = ((absDelta [0] < absDelta [1]) + (button == 1)) % 2 // middle mouse button means choosing the smaller axis

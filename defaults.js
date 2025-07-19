@@ -1,7 +1,7 @@
 export const defaults = {
 	snake: {
-		face: [1,0],
-		segments: [[1,0],[0,0]],
+		face: [1, 0],
+		segments: [[1, 0],[0, 0]],
 		alive: true,
 		grow: 0,
 	},

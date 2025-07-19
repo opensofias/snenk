@@ -9,22 +9,22 @@ export const step = state => {
 	
 	face = queue.length ? queue [0] : face
 
-	const target = segments[0].add(face);
+	const target = segments [0].add (face);
 
 	alive &&= 
-		target.every((pos, idx) => 0 <= pos && pos < arena[idx]) &&
-		segments.every(seg => !seg.eq(target));
+		target.every ((pos, idx) => 0 <= pos && pos < arena [idx]) &&
+		segments.every (seg => !seg.eq (target));
 
 	const eaten = alive && target.eq (apple);
 
 	segments = (!alive) ? segments :
 		eaten ? [target, ...segments] :
-			[target, ...segments].slice(0, -1);
+			[target, ...segments].slice (0, -1);
 
 	if (segments.length == arena.reduce ((cur, pre) => cur * pre, 1))
 		win ||= (alert ('woah, nice!') || true)
-	else while (segments.some(seg => seg.eq(apple)))
-		apple = arena.map(max => Math.floor(Math.random() * max));
+	else while (segments.some (seg => seg.eq (apple)))
+		apple = arena.map (max => Math.floor (Math.random () * max));
 
 	return {
 		...state, apple, win,
