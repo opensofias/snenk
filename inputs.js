@@ -1,4 +1,8 @@
-export const pointerListener = ({
+import { defaults } from "./defaults.js"
+import { keyMap } from "./keyMap.js"
+import { step, enqueue } from "./game.js"
+
+export const handlePointer = (state, {
 	target: {clientWidth, clientHeight}, button, offsetX, offsetY
 }) => {
 	const {arena, queue, snake} = state
@@ -13,36 +17,37 @@ export const pointerListener = ({
 	const axis = ((absDelta [0] < absDelta [1]) + (button == 1)) % 2 // middle mouse button means choosing the smaller axis
 	const positive = deltaVec [axis] > 0
 	
+	let newState = state
 	for ({} of absDelta [axis])
-		state = enqueue (state, axis ? [0, positive ? 1 : -1] : [positive ? 1 : -1 ,0])
+		newState = enqueue (newState, axis ? [0, positive ? 1 : -1] : [positive ? 1 : -1 ,0])
 
-	render (state)
+	return newState
 }
 
-export const keyListener = ({key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
-
+export const handleKey = (state, loop, {key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
 	const boost = shiftKey ? 4 : 1
+	let newState = state
 
 	if (key == ' ')
 		for ({} of ctrlKey ? state.queue : boost)
-			state = step (state)
+			newState = step (newState)
 
 	if (key in keyMap && !keyRepeat)
-		for ({} of boost) state = enqueue (state, keyMap [key])
+		for ({} of boost) newState = enqueue (newState, keyMap [key])
 
 	if (key == 'Backspace')
-		state = {...state, queue: ctrlKey ? [] : state.queue.slice (0, -boost)}
+		newState = {...newState, queue: ctrlKey ? [] : newState.queue.slice (0, -boost)}
 
 	if (key == 'Enter') {
-		if (!state.snake.alive) {
-			state = defaults
+		if (!newState.snake.alive) {
+			newState = defaults
 			loop ()
 		} else {
-			const {pause} = state
-			state.pause = !pause
+			const {pause} = newState
+			newState.pause = !pause
 			if (pause) loop ()
 		}
 	}
 
-	render (state)
+	return newState
 }

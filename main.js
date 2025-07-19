@@ -4,12 +4,9 @@ import { canvas, render } from "./render.js"
 import { step, enqueue } from "./game.js"
 import {} from "https://opensofias.github.io/dimekit/dimekit.js"
 import {} from "https://opensofias.github.io/dimekit/vectorOps.js"
-import { keyListener, pointerListener } from "./inputs.js"
+import { handleKey, handlePointer } from "./inputs.js"
 
 let state = defaults
-
-onkeydown = keyListener
-canvas.onpointerdown = pointerListener
 
 const loop = () => {
 	if (state.pause) return;
@@ -18,6 +15,16 @@ const loop = () => {
 	render (state)
 
 	if (state.snake.alive) setTimeout (loop, 1000/4)
+}
+
+onkeydown = (event) => {
+	state = handleKey (state, loop, event)
+	render (state)
+}
+
+canvas.onpointerdown = (event) => {
+	state = handlePointer (state, event)
+	render (state)
 }
 
 loop ()
