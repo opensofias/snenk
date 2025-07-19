@@ -1,5 +1,5 @@
 import { defaults } from "./defaults.js"
-import { keyMap } from "./keymap.js"
+import { keyMap } from "./keyMap.js"
 import { canvas, render } from "./render.js"
 import { step, enqueue } from "./game.js"
 import {} from "https://opensofias.github.io/dimekit/dimekit.js"
