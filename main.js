@@ -1,5 +1,5 @@
 import { defaults } from "./defaults.js"
-import { keymap } from "./keymap.js"
+import { keyMap } from "./keymap.js"
 import { canvas, render } from "./render.js"
 import { step, enqueue } from "./game.js"
 import {} from "https://opensofias.github.io/dimekit/dimekit.js"
@@ -15,8 +15,8 @@ onkeydown = ({key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
 		for ({} of ctrlKey ? state.queue : boost)
 			state = step (state)
 
-	if (key in keymap && !keyRepeat)
-		for ({} of boost) state = enqueue (state, keymap [key])
+	if (key in keyMap && !keyRepeat)
+		for ({} of boost) state = enqueue (state, keyMap [key])
 
 	if (key == 'Backspace')
 		state = {...state, queue: ctrlKey ? [] : state.queue.slice (0, -boost)}
