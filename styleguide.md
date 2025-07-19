@@ -38,7 +38,7 @@ The codebase follows a minimalist, functional approach with heavy use of modern 
 ## Code Structure
 
 ### Function Definitions
-- Prefer arrow functions when possible: `const step = state => {`
+- Prefer arrow functions when possible: `const step = state => {}`
 - Single expression arrows without braces when possible
 
 ### Control Flow
