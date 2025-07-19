@@ -36,21 +36,21 @@ onkeydown = ({key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
 }
 
 export const pointerListener = ({
-	target: {clientWidth, clientHeight}, button, x, y
+	target: {clientWidth, clientHeight}, button, offsetX, offsetY
 }) => {
 	const {arena, queue, snake} = state
 	const queueTip = snake.segments [0].add (...queue)
 	const pointerVec = [
-		x / clientWidth * arena [0],
-		y / clientHeight * arena [1],
-	]
+		offsetX / clientWidth * arena [0],
+		offsetY / clientHeight * arena [1],
+	].map (Math.floor)
 	const deltaVec = pointerVec.add (queueTip.sclMul (-1))
-	const absDelta = deltaVec.map (x => Math.abs (x))
+	const absDelta = deltaVec.map (Math.abs)
 	
 	const axis = ((absDelta [0] < absDelta [1]) + (button == 1)) % 2 // middle mouse button means choosing the smaller axis
 	const positive = deltaVec [axis] > 0
 	
-	for ({} of absDelta [axis] + !positive)
+	for ({} of absDelta [axis])
 		state = enqueue (state, axis ? [0, positive ? 1 : -1] : [positive ? 1 : -1 ,0])
 
 	render (state)
