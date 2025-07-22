@@ -4,7 +4,7 @@ import { canvas, render } from "./render.js"
 import { step, enqueue } from "./game.js"
 import {} from "https://opensofias.github.io/dimekit/dimekit.js"
 import {} from "https://opensofias.github.io/dimekit/vectorOps.js"
-import { handleKey, handlePointer } from "./inputs.js"
+import { handleKey, handlePointer, handleGamepad } from "./inputs.js"
 
 let state = defaults
 
@@ -26,5 +26,19 @@ canvas.onpointerdown = (event) => {
 	state = handlePointer (state, event)
 	render (state)
 }
+
+const gamepadLoop = () => {
+	const prevState = state
+	state = handleGamepad(state, loop)
+	
+	// Only render if state actually changed
+	if (state !== prevState) {
+		render(state)
+	}
+	
+	requestAnimationFrame(gamepadLoop)
+}
+
+gamepadLoop()
 
 loop ()
