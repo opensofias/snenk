@@ -52,13 +52,18 @@ export const handleKey = (state, loop, {key, repeat: keyRepeat, ctrlKey, shiftKe
 	return newState
 }
 
-export const handleGamepad = (state, loop, gamepad, oldGamepadState) => {
-	let newState = state
+export const pollGamepad = gamepad => ({
+	buttons: gamepad.buttons.map(b => ({pressed: b.pressed, value: b.value})),
+	axes: [...gamepad.axes]
+})
+
+export const handleGamepad = (gameState, loop, gamepadState, oldGamepadState) => {
+	let newState = gameState
 	
 	// Calculate boost from left trigger
-	const boost = Math.floor((gamepad.buttons[6]?.value || 0) * 4) + 1
+	const boost = Math.floor((gamepadState.buttons[6]?.value || 0) * 4) + 1
 	
-	gamepad.buttons.forEach((button, index) => {
+	gamepadState.buttons.forEach((button, index) => {
 		if (
 			button.pressed && !(oldGamepadState.buttons[index]?.pressed || false) // Fresh press only
 		) { 
@@ -75,7 +80,7 @@ export const handleGamepad = (state, loop, gamepad, oldGamepadState) => {
 					newState = step(newState)
 				}
 			}
-			if (index === 1) { // B button - pause/unpause
+			if (index === 9) { // Start button - pause/unpause
 				if (!newState.snake.alive) {
 					newState = defaults
 					loop()
@@ -89,7 +94,7 @@ export const handleGamepad = (state, loop, gamepad, oldGamepadState) => {
 	})
 	
 	// Handle analog sticks with deadzone
-	gamepad.axes.forEach((axis, index) => {
+	gamepadState.axes.forEach((axis, index) => {
 		const lastAxis = oldGamepadState.axes[index] || 0
 		const deadzone = 0.5
 		
@@ -110,12 +115,6 @@ export const handleGamepad = (state, loop, gamepad, oldGamepadState) => {
 			}
 		}
 	})
-	
-	// Store current state for next frame
-	const gamepadState = {
-		buttons: gamepad.buttons.map(b => ({pressed: b.pressed, value: b.value})),
-		axes: [...gamepad.axes]
-	}
-	
-	return {state: newState, gamepadState}
+		
+	return newState
 }

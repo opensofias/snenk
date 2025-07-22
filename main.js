@@ -1,30 +1,29 @@
 import { defaults } from "./defaults.js"
-import { keyMap } from "./keyMap.js"
 import { canvas, render } from "./render.js"
-import { step, enqueue } from "./game.js"
+import { step } from "./game.js"
 import {} from "https://opensofias.github.io/dimekit/dimekit.js"
 import {} from "https://opensofias.github.io/dimekit/vectorOps.js"
-import { handleKey, handlePointer, handleGamepad } from "./inputs.js"
+import { handleKey, handlePointer, handleGamepad, pollGamepad } from "./inputs.js"
 
-let state = defaults
+let gameState = defaults
 
 const loop = () => {
-	if (state.pause) return;
+	if (gameState.pause) return;
 
-	state = step (state)
-	render (state)
+	gameState = step (gameState)
+	render (gameState)
 
-	if (state.snake.alive) setTimeout (loop, 1000/4)
+	if (gameState.snake.alive) setTimeout (loop, 1000/4)
 }
 
 onkeydown = (event) => {
-	state = handleKey (state, loop, event)
-	render (state)
+	gameState = handleKey (gameState, loop, event)
+	render (gameState)
 }
 
 canvas.onpointerdown = (event) => {
-	state = handlePointer (state, event)
-	render (state)
+	gameState = handlePointer (gameState, event)
+	render (gameState)
 }
 
 // Curried self-calling rAF loop
@@ -32,15 +31,16 @@ const gamepadLoop = (gamepadState = {buttons: [], axes: []}) => () => {
 	const gamepad = navigator.getGamepads()[0]
 
 	if (gamepad) {
-		const result = handleGamepad(state, loop, gamepad, gamepadState)
+		let oldGamepadState = gamepadState
+		gamepadState = pollGamepad (gamepad)
+
+		const newGameState = handleGamepad (gameState, loop, gamepadState, oldGamepadState)
 	
 		// Only render if state actually changed
-		if (state !== result.state) {
-			state = result.state
-			render(state)
+		if (gameState !== newGameState) {
+			gameState = newGameState
+			render(gameState)
 		}
-
-		gamepadState = result.gamepadState
 	}
 	
 	requestAnimationFrame(gamepadLoop(gamepadState))
