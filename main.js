@@ -27,18 +27,24 @@ canvas.onpointerdown = (event) => {
 	render (state)
 }
 
-const gamepadLoop = () => {
-	const prevState = state
-	state = handleGamepad(state, loop)
+// Curried self-calling rAF loop
+const gamepadLoop = (gamepadState = {buttons: [], axes: []}) => () => {
+	const gamepad = navigator.getGamepads()[0]
+
+	if (gamepad) {
+		const result = handleGamepad(state, loop, gamepad, gamepadState)
 	
-	// Only render if state actually changed
-	if (state !== prevState) {
-		render(state)
+		// Only render if state actually changed
+		if (state !== result.state) {
+			state = result.state
+			render(state)
+		}
+
+		gamepadState = result.gamepadState
 	}
 	
-	requestAnimationFrame(gamepadLoop)
+	requestAnimationFrame(gamepadLoop(gamepadState))
 }
-
-gamepadLoop()
+gamepadLoop ()()
 
 loop ()
