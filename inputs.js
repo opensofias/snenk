@@ -61,7 +61,7 @@ export const handleGamepad = (gameState, loop, gamepadState, oldGamepadState) =>
 	let newState = gameState
 	
 	// Calculate boost from left trigger
-	const boost = Math.floor((gamepadState.buttons[6]?.value || 0) * 4) + 1
+	const boost = Math.floor((gamepadState.buttons[6]?.value || 0) * 3) + 1
 	
 	gamepadState.buttons.forEach((button, index) => {
 		if (
