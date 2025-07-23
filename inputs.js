@@ -46,7 +46,7 @@ export const handleKey = (state, {key, repeat: keyRepeat, ctrlKey, shiftKey}) =>
 
 export const pollGamepad = gamepad => ({
 	buttons: gamepad.buttons.map(b => ({pressed: b.pressed, value: b.value})),
-	axes: [...gamepad.axes]
+	lStick: discretizeLeftStick (gamepad.axes.slice (0, 2))
 })
 
 export const handleGamepad = (gamepadState, oldGamepadState) => {
@@ -70,25 +70,66 @@ export const handleGamepad = (gamepadState, oldGamepadState) => {
 		}
 	})
 	
-	// Handle analog sticks with deadzone
-	gamepadState.axes.forEach((axis, index) => {
-		const lastAxis = oldGamepadState.axes[index] || 0
-		const deadzone = 0.5
+	// Handle left stick movement
+	const currentStick = gamepadState.lStick
+	const oldStick = oldGamepadState.lStick || [0, 0]
+	
+	// Only process if stick position changed
+	if (!currentStick.eq(oldStick) && !currentStick.eq([0, 0])) {
+		const absStick = currentStick.map(Math.abs)
 		
-		if (
-			Math.abs(axis) > deadzone &&
-			!Math.abs(lastAxis) > deadzone &&
-			index in gamepadMap.axes
-		) {
-			const direction = axis > 0 ? 1 : 0
-			const mapping = gamepadMap.axes[index]
-			const directionVector = direction === 0 ? 
-				[mapping[0], mapping[1]] : [mapping[2], mapping[3]]
+		// Determine major and minor axes
+		const majorAxis = absStick[0] >= absStick[1] ? 0 : 1
+		const minorAxis = 1 - majorAxis
+		
+		// Enqueue major axis first if non-zero
+		if (currentStick[majorAxis] !== 0) {
+			const majorVector = majorAxis === 0 ? 
+				[currentStick[majorAxis] > 0 ? 1 : -1, 0] :
+				[0, currentStick[majorAxis] > 0 ? 1 : -1]
 			
-			for ({} of boost)
-				actions.push(directionVector)
+			for ({} of boost) actions.push(majorVector)
 		}
-	})
+		
+		// Then enqueue minor axis if non-zero
+		if (currentStick[minorAxis] !== 0) {
+			const minorVector = minorAxis === 0 ?
+				[currentStick[minorAxis] > 0 ? 1 : -1, 0] :
+				[0, currentStick[minorAxis] > 0 ? 1 : -1]
+			
+			for ({} of boost) actions.push(minorVector)
+		}
+	}
 	
 	return actions
+}
+
+const euclideanDistance = (v1, v2) =>
+	Math.sqrt (
+		(v1[0] - v2[0]) ** 2 +
+		(v1[1] - v2[1]) ** 2 
+	)
+
+const discretizeLeftStick = (vec) => {
+	const targets = [
+		[0, 0], //deadzone
+		[1, -2/3], [1, 0], [1, 2/3],
+		[2/3, 1], [0, 1], [-2/3, 1],
+		[-1, 2/3], [-1, 0], [-1, -2/3],
+		[-2/3, -1], [0, -1], [2/3, -1]
+	]
+	
+	// Find closest target by euclidean distance
+	let closestTarget = []
+	let minDistance = Infinity
+	
+	for (const target of targets) {
+		const distance = euclideanDistance (vec, target)
+		if (distance < minDistance) {
+			minDistance = distance
+			closestTarget = target
+		}
+	}
+	
+	return closestTarget
 }
