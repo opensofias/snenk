@@ -1,6 +1,7 @@
 import { defaults } from "./defaults.js"
 import { keyMap, gamepadMap } from "./keyMap.js"
 import { step, enqueue } from "./game.js"
+import { boostableActions } from "./actions.js"
 
 export const handlePointer = (state, {
 	target: {clientWidth, clientHeight}, button, offsetX, offsetY
@@ -24,32 +25,23 @@ export const handlePointer = (state, {
 	return newState
 }
 
-export const handleKey = (state, loop, {key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
+export const handleKey = (state, {key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
+	if (keyRepeat) return []
+	
 	const boost = shiftKey ? 4 : 1
-	let newState = state
-
-	if (key == ' ')
-		for ({} of ctrlKey ? state.queue : boost)
-			newState = step (newState)
-
-	if (key in keyMap && !keyRepeat)
-		for ({} of boost) newState = enqueue (newState, keyMap [key])
-
-	if (key == 'Backspace')
-		newState = {...newState, queue: ctrlKey ? [] : newState.queue.slice (0, -boost)}
-
-	if (key == 'Enter') {
-		if (!newState.snake.alive) {
-			newState = defaults
-			loop ()
-		} else {
-			const {pause} = newState
-			newState.pause = !pause
-			if (pause) loop ()
-		}
+	const actions = []
+	
+	const action = ctrlKey && keyMap.Ctrl?.[key] ? 
+		keyMap.Ctrl[key] : keyMap[key]
+	
+	if (action) {
+		const isBoostable = boostableActions.has(action) || Array.isArray(action)
+		const boostCount = isBoostable ? boost : 1
+		
+		for ({} of boostCount) actions.push(action)
 	}
-
-	return newState
+	
+	return actions
 }
 
 export const pollGamepad = gamepad => ({
@@ -57,38 +49,23 @@ export const pollGamepad = gamepad => ({
 	axes: [...gamepad.axes]
 })
 
-export const handleGamepad = (gameState, loop, gamepadState, oldGamepadState) => {
-	let newState = gameState
+export const handleGamepad = (gamepadState, oldGamepadState) => {
+	const actions = []
 	
 	// Calculate boost from left trigger
 	const boost = Math.floor((gamepadState.buttons[6]?.value || 0) * 3) + 1
+	const leftBumper = gamepadState.buttons[4]?.pressed || false
 	
 	gamepadState.buttons.forEach((button, index) => {
-		if (
-			button.pressed && !(oldGamepadState.buttons[index]?.pressed || false) // Fresh press only
-		) { 
-			if (index in gamepadMap) {
-				// Apply boost to directional inputs
-				for (let j = 0; j < boost; j++) {
-					newState = enqueue(newState, gamepadMap[index])
-				}
-			}
+		if (button.pressed && !(oldGamepadState.buttons[index]?.pressed || false)) {
+			const action = leftBumper && gamepadMap.LeftBumper?.[index] ? 
+				gamepadMap.LeftBumper[index] : gamepadMap[index]
 			
-			// Handle special buttons
-			if (index === 0) { // A button - step/boost step
-				for (let j = 0; j < boost; j++) {
-					newState = step(newState)
-				}
-			}
-			if (index === 9) { // Start button - pause/unpause
-				if (!newState.snake.alive) {
-					newState = defaults
-					loop()
-				} else {
-					const {pause} = newState
-					newState.pause = !pause
-					if (pause) loop()
-				}
+			if (action) {
+				const boostCount = boostableActions.has(action) || Array.isArray(action) ? boost : 1
+				
+				for ({} of boostCount)
+					actions.push(action)
 			}
 		}
 	})
@@ -98,7 +75,6 @@ export const handleGamepad = (gameState, loop, gamepadState, oldGamepadState) =>
 		const lastAxis = oldGamepadState.axes[index] || 0
 		const deadzone = 0.5
 		
-		// Check if axis crossed threshold (fresh input)
 		if (
 			Math.abs(axis) > deadzone &&
 			!Math.abs(lastAxis) > deadzone &&
@@ -109,12 +85,10 @@ export const handleGamepad = (gameState, loop, gamepadState, oldGamepadState) =>
 			const directionVector = direction === 0 ? 
 				[mapping[0], mapping[1]] : [mapping[2], mapping[3]]
 			
-			// Apply boost to analog stick inputs
-			for (let j = 0; j < boost; j++) {
-				newState = enqueue(newState, directionVector)
-			}
+			for ({} of boost)
+				actions.push(directionVector)
 		}
 	})
-		
-	return newState
+	
+	return actions
 }

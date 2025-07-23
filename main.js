@@ -4,6 +4,7 @@ import { step } from "./game.js"
 import {} from "https://opensofias.github.io/dimekit/dimekit.js"
 import {} from "https://opensofias.github.io/dimekit/vectorOps.js"
 import { handleKey, handlePointer, handleGamepad, pollGamepad } from "./inputs.js"
+import { applyActions } from "./actions.js"
 
 let gameState = defaults
 
@@ -17,8 +18,12 @@ const loop = () => {
 }
 
 onkeydown = (event) => {
-	gameState = handleKey (gameState, loop, event)
-	render (gameState)
+	const actions = handleKey(gameState, event)
+
+	if (actions.length) {
+		gameState = applyActions(gameState, loop, actions)
+		render(gameState)
+	}
 }
 
 canvas.onpointerdown = (event) => {
@@ -34,12 +39,12 @@ const gamepadLoop = (gamepadState = {buttons: [], axes: []}) => () => {
 		let oldGamepadState = gamepadState
 		gamepadState = pollGamepad (gamepad)
 
-		const newGameState = handleGamepad (gameState, loop, gamepadState, oldGamepadState)
+		const actions = handleGamepad (gamepadState, oldGamepadState)
 	
 		// Only render if state actually changed
-		if (gameState !== newGameState) {
-			gameState = newGameState
-			render(gameState)
+		if (actions.length) {
+			gameState = applyActions (gameState, loop, actions)
+			render (gameState)
 		}
 	}
 	
