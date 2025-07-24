@@ -31,6 +31,10 @@ canvas.onpointerdown = (event) => {
 	render (gameState)
 }
 
+canvas.ondblclick = () => {
+	gameState = applyActions (gameState, loop, ['pause'])
+}
+
 // Curried self-calling rAF loop
 const gamepadLoop = (gamepadState = {buttons: [], axes: []}) => () => {
 	const gamepad = navigator.getGamepads()[0]
