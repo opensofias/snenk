@@ -43,7 +43,7 @@ export const enqueue = (state, direction) => {
 	
 	// Handle scalar magnitudes - enqueue multiple times
 	const magnitude = Math.max(...direction.map(Math.abs))
-	if (magnitude > 1) {
+	if (magnitude != 1) {
 		const unitDirection = direction.map(x => x === 0 ? 0 : Math.sign(x))
 		let newState = state
 		for ({} of magnitude)
