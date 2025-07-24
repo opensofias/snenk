@@ -18,7 +18,7 @@ const loop = () => {
 }
 
 onkeydown = (event) => {
-	const actions = handleKey(gameState, event)
+	const actions = handleKey(event)
 
 	if (actions.length) {
 		gameState = applyActions(gameState, loop, actions)

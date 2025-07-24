@@ -19,7 +19,7 @@ export const handlePointer = (state, {
 	return enqueue (state, targetVector)
 }
 
-export const handleKey = (state, {key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
+export const handleKey = ({key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
 	if (keyRepeat) return []
 	
 	const boost = shiftKey ? 4 : 1
