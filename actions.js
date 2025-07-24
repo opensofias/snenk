@@ -9,7 +9,7 @@ export const applyActions = (state, loop, actions) => {
 
 	actions.forEach ((action) => {
 		if (Array.isArray (action)) {
-			// Direction vector - always boostable via enqueue
+			// Direction vector
 			newState = enqueue (newState, action)
 		} else {
 			// String action
@@ -18,7 +18,7 @@ export const applyActions = (state, loop, actions) => {
 					newState = step (newState)
 					break
 				case 'fullQueue':
-					// Step through entire queue
+					// Step snake through entire queue
 					for ({} of newState.queue)
 						newState = step (newState)
 					break
