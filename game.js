@@ -56,8 +56,8 @@ export const enqueue = (state, direction) => {
 
 export const enqueueStep = (state, direction) => ({
 	...state,
-	// Test if new direction is opposite to current direction
-	queue: unitDirection.eq (queueTipDirection (state).sclMul (-1)) ? 
+	// Opposite to directions cancel out
+	queue: direction.eq (queueTipDirection (state).sclMul (-1)) ? 
 		state.queue.slice (0, -1) :
-		[...state.queue, unitDirection]
+		[...state.queue, direction]
 })
