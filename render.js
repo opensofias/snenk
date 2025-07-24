@@ -1,10 +1,11 @@
 import { defaults } from "./defaults.js"
+import { queueTip } from "./game.js"
 
-export const canvas = document.createElement ('canvas')
-canvas.height = defaults.arena [1]
-canvas.width = defaults.arena [0]
-document.body.appendChild (canvas)
-const ctx = canvas.getContext ('2d')
+export const canvas = document.createElement('canvas')
+canvas.height = defaults.arena[1]
+canvas.width = defaults.arena[0]
+document.body.appendChild(canvas)
+const ctx = canvas.getContext('2d')
 
 export const render = (state) => {
 	const {arena, snake, apple, gamepadCursorOffset} = state
@@ -13,7 +14,7 @@ export const render = (state) => {
 	ctx.fillStyle = snake.alive ? '#0f0' : '#888'
 	snake.segments.forEach (seg =>
 		ctx.fillRect (...seg, 1, 1)
-	);
+	)
 	ctx.fillStyle = '#f00'
 	ctx.fillRect (...apple, 1, 1)
 
@@ -27,8 +28,8 @@ export const render = (state) => {
 
 	// Render gamepad cursor if present
 	if (gamepadCursorOffset) {
-		const queueTip = state.snake.segments [0].add (...state.queue)
-		const gamepadCursor = queueTip.add (gamepadCursorOffset)
+		const currentTip = queueTip (state)
+		const gamepadCursor = currentTip.add (gamepadCursorOffset)
 		ctx.fillStyle = '#fc08'
 		ctx.fillRect (...gamepadCursor, 1, 1)
 	}

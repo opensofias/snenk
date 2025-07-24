@@ -1,3 +1,8 @@
+export const queueTip = state => {
+	const {snake: {segments}, queue} = state
+	return queue.reduce((tip, direction) => tip.add(direction), segments[0])
+}
+
 export const step = state => {
 	let {snake: {segments, face, alive}, apple, arena, queue, win} = state
 	
@@ -36,13 +41,23 @@ export const step = state => {
 export const enqueue = (state, direction) => {
 	let {queue} = state
 	
+	// Handle scalar magnitudes - enqueue multiple times
+	const magnitude = Math.max(...direction.map(Math.abs))
+	if (magnitude > 1) {
+		const unitDirection = direction.map(x => x === 0 ? 0 : Math.sign(x))
+		let newState = state
+		for ({} of magnitude)
+			newState = enqueue(newState, unitDirection)
+		return newState
+	}
+	
 	// Get the current tip of the queue (or snake face if queue is empty)
-	const queueTip = queue.length ? queue[queue.length - 1] : state.snake.face
+	const currentTip = queue.length ? queue[queue.length - 1] : state.snake.face
 		
 	return {
 		...state,
 		// Test if new direction is opposite to tip of the queue 
-		queue: direction.eq (queueTip.sclMul (-1)) ? 
+		queue: direction.eq(currentTip.sclMul(-1)) ? 
 			queue.slice(0, -1) :
 			[...queue, direction]
 	}
