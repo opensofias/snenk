@@ -14,13 +14,10 @@ export const handlePointer = (state, {
 		offsetY / clientHeight * arena [1],
 	].map (Math.floor)
 	const deltaVec = pointerVec.add (currentTip.sclMul (-1))
-	const absDelta = deltaVec.map (Math.abs)
 
-	const axis = ((absDelta [0] < absDelta [1]) + (button == 1)) % 2 // middle mouse button means choosing the smaller axis
-	const positive = deltaVec [axis] > 0
+	const targetVector = (button != 1 ? majorAxis : minorAxis) (deltaVec)
 
-	const direction = toUnitVector (axis, positive)
-	return enqueue (state, direction.sclMul (absDelta [axis]))
+	return enqueue (state, targetVector)
 }
 
 export const handleKey = (state, {key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
