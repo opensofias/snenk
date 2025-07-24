@@ -1,6 +1,6 @@
-import { step, enqueue, queueTip } from "./game.js"
+import { step, enqueue } from "./game.js"
 import { defaults } from "./defaults.js"
-import { majorAxis, minorAxis, toUnitVector, majorAxisIndex } from "./vectorUtils.js"
+import { majorAxis, minorAxis } from "./vectorUtils.js"
 
 export const boostableActions = new Set(['step', 'fullQueue', 'dequeue', 'clearQueue', 'enqueueRightStickMajor', 'enqueueRightStickMinor'])
 

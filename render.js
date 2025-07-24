@@ -1,5 +1,5 @@
 import { defaults } from "./defaults.js"
-import { queueTip } from "./game.js"
+import { queueTipPosition } from "./game.js"
 
 export const canvas = document.createElement('canvas')
 canvas.height = defaults.arena[1]
@@ -28,8 +28,7 @@ export const render = (state) => {
 
 	// Render gamepad cursor if present
 	if (gamepadCursorOffset) {
-		const currentTip = queueTip (state)
-		const gamepadCursor = currentTip.add (gamepadCursorOffset)
+		const gamepadCursor = queueTipPosition (state).add (gamepadCursorOffset)
 		ctx.fillStyle = '#fc08'
 		ctx.fillRect (...gamepadCursor, 1, 1)
 	}

@@ -1,19 +1,18 @@
 import { defaults } from "./defaults.js"
 import { keyMap, gamepadMap } from "./keyMap.js"
-import { step, enqueue, queueTip } from "./game.js"
+import { enqueue, queueTipPosition } from "./game.js"
 import { boostableActions } from "./actions.js"
-import { majorAxis, minorAxis, euclideanDistance, toUnitVector } from "./vectorUtils.js"
+import { majorAxis, minorAxis, euclideanDistance } from "./vectorUtils.js"
 
 export const handlePointer = (state, {
 	target: {clientWidth, clientHeight}, button, offsetX, offsetY
 }) => {
 	const {arena} = state
-	const currentTip = queueTip (state)
 	const pointerVec = [
 		offsetX / clientWidth * arena [0],
 		offsetY / clientHeight * arena [1],
 	].map (Math.floor)
-	const deltaVec = pointerVec.add (currentTip.sclMul (-1))
+	const deltaVec = pointerVec.add (queueTipPosition (state).sclMul (-1))
 
 	const targetVector = (button != 1 ? majorAxis : minorAxis) (deltaVec)
 
@@ -26,13 +25,13 @@ export const handleKey = (state, {key, repeat: keyRepeat, ctrlKey, shiftKey}) =>
 	const boost = shiftKey ? 4 : 1
 	const actions = []
 	
-	const action = ctrlKey && keyMap.Ctrl?.[key] ? 
-		keyMap.Ctrl[key] : keyMap[key]
+	const action = ctrlKey && keyMap.Ctrl?. [key] ? 
+		keyMap.Ctrl [key] : keyMap [key]
 	
 	if (action) {
-		const isBoostable = boostableActions.has(action) || Array.isArray(action)
+		const isBoostable = boostableActions.has (action) || Array.isArray (action)
 		
-		for ({} of isBoostable ? boost : 1) actions.push(action)
+		for ({} of isBoostable ? boost : 1) actions.push (action)
 	}
 	
 	return actions
