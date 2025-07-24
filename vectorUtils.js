@@ -1,12 +1,10 @@
 export const majorAxis = vec => {
-	const absVec = vec.map(Math.abs)
-	const majorIndex = absVec[0] >= absVec[1] ? 0 : 1
+	const majorIndex = majorAxisIndex (vec)
 	return vec.map((val, idx) => idx === majorIndex ? val : 0)
 }
 
 export const minorAxis = vec => {
-	const absVec = vec.map(Math.abs)
-	const majorIndex = absVec[0] >= absVec[1] ? 0 : 1
+	const majorIndex = majorAxisIndex (vec)
 	return vec.map((val, idx) => idx !== majorIndex ? val : 0)
 }
 
