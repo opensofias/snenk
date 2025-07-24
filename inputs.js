@@ -15,10 +15,10 @@ export const handlePointer = (state, {
 	].map (Math.floor)
 	const deltaVec = pointerVec.add (currentTip.sclMul (-1))
 	const absDelta = deltaVec.map (Math.abs)
-	
+
 	const axis = ((absDelta [0] < absDelta [1]) + (button == 1)) % 2 // middle mouse button means choosing the smaller axis
 	const positive = deltaVec [axis] > 0
-	
+
 	const direction = toUnitVector (axis, positive)
 	return enqueue (state, direction.sclMul (absDelta [axis]))
 }
@@ -83,7 +83,7 @@ export const handleGamepad = (gamepadState, oldGamepadState) => {
 			actions.push ('enqueueRightStickMinor')
 	}
 	
-	// Handle left stick movement - no need to check for zero vectors anymore!
+	// Handle left stick movement
 	const currentStick = gamepadState.lStick
 	const oldStick = oldGamepadState.lStick || [0, 0]
 	
@@ -93,7 +93,7 @@ export const handleGamepad = (gamepadState, oldGamepadState) => {
 		
 		// Enqueue with boost using sclMul
 		actions.push (major.sclMul (boost))
-		actions.push (minor.sclMul (boost))
+		actions.push (minor.map(Math.round).sclMul (boost))
 	}
 	
 	return actions
