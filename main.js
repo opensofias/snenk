@@ -6,7 +6,7 @@ import {} from "https://opensofias.github.io/dimekit/vectorOps.js"
 import { handleKey, handlePointer, handleGamepad, pollGamepad } from "./inputs.js"
 import { applyActions } from "./actions.js"
 
-let gameState = defaults
+let gameState = {...defaults, gamepadCursorOffset: null}
 
 const loop = () => {
 	if (gameState.pause) return;
@@ -40,9 +40,17 @@ const gamepadLoop = (gamepadState = {buttons: [], axes: []}) => () => {
 		gamepadState = pollGamepad (gamepad)
 
 		const actions = handleGamepad (gamepadState, oldGamepadState)
+		
+		// Update cursor offset based on right stick
+		const {rStick} = gamepadState
+		if (rStick.eq([0, 0])) {
+			gameState = {...gameState, gamepadCursorOffset: null}
+		} else {
+			gameState = {...gameState, gamepadCursorOffset: rStick}
+		}
 	
-		// Only render if state actually changed
-		if (actions.length) {
+		// Only render if state actually changed or cursor moved
+		if (actions.length || !rStick.eq(oldGamepadState.rStick || [0, 0])) {
 			gameState = applyActions (gameState, loop, actions)
 			render (gameState)
 		}

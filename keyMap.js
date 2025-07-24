@@ -21,11 +21,12 @@ export const gamepadMap = {
 	15: [1, 0],  // right
 	0: 'step',   // A button
 	1: 'dequeue', // B button
+	5: 'enqueueRightStickMajor', // RB (right bumper)
 	9: 'pause',  // Start button
 	LeftBumper: {
-		0: 'fullQueue',   // A + RB
-		1: 'clearQueue',  // B + RB
-		9: 'restartGame'  // Start + RB
+		0: 'fullQueue',   // A + LB
+		1: 'clearQueue',  // B + LB
+		9: 'restartGame'  // Start + LB
 	},
 	
 	// Left stick

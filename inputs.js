@@ -46,7 +46,8 @@ export const handleKey = (state, {key, repeat: keyRepeat, ctrlKey, shiftKey}) =>
 
 export const pollGamepad = gamepad => ({
 	buttons: gamepad.buttons.map(b => ({pressed: b.pressed, value: b.value})),
-	lStick: discretizeLeftStick (gamepad.axes.slice (0, 2))
+	lStick: discretizeLeftStick (gamepad.axes.slice (0, 2)),
+	rStick: discretizeRightStick (gamepad.axes.slice (2, 4))
 })
 
 export const handleGamepad = (gamepadState, oldGamepadState) => {
@@ -70,11 +71,20 @@ export const handleGamepad = (gamepadState, oldGamepadState) => {
 		}
 	})
 	
+	// Handle right trigger for minor axis enqueuing
+	const rightTrigger = gamepadState.buttons[7]?.pressed || false
+	const oldRightTrigger = oldGamepadState.buttons?.[7]?.pressed || false
+	
+	if (rightTrigger && !oldRightTrigger) {
+		for ({} of boost)
+			actions.push('enqueueRightStickMinor')
+	}
+	
 	// Handle left stick movement
 	const currentStick = gamepadState.lStick
 	const oldStick = oldGamepadState.lStick || [0, 0]
 	
-	// Only process if stick position changed
+	// Only process if stick position changed and not in deadzone
 	if (!currentStick.eq(oldStick) && !currentStick.eq([0, 0])) {
 		const absStick = currentStick.map(Math.abs)
 		
@@ -109,6 +119,9 @@ const euclideanDistance = (v1, v2) =>
 		(v1[0] - v2[0]) ** 2 +
 		(v1[1] - v2[1]) ** 2 
 	)
+
+const discretizeRightStick = (vec, factor = 4) =>
+	vec.sclMul (factor).map (Math.round)
 
 const discretizeLeftStick = (vec) => {
 	const targets = [
