@@ -31,9 +31,8 @@ export const handleKey = (state, {key, repeat: keyRepeat, ctrlKey, shiftKey}) =>
 	
 	if (action) {
 		const isBoostable = boostableActions.has(action) || Array.isArray(action)
-		const boostCount = isBoostable ? boost : 1
 		
-		for ({} of boostCount) actions.push(action)
+		for ({} of isBoostable ? boost : 1) actions.push(action)
 	}
 	
 	return actions
@@ -97,7 +96,7 @@ export const handleGamepad = (gamepadState, oldGamepadState) => {
 }
 
 const discretizeRightStick = (vec, factor = 4) =>
-	vec.sclMul(factor).map(Math.round)
+	vec.sclMul (factor).map (Math.round)
 
 const discretizeLeftStick = (vec) => {
 	const targets = [
