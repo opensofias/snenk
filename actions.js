@@ -4,7 +4,7 @@ import { majorAxis, minorAxis } from "./vectorUtils.js"
 
 export const boostableActions = new Set(['step', 'fullQueue', 'dequeue', 'clearQueue', 'enqueueRightStickMajor', 'enqueueRightStickMinor'])
 
-export const applyActions = (state, loop, actions) => {
+export const applyActions = (state, actions) => {
 	let newState = state
 
 	actions.forEach ((action) => {
@@ -40,16 +40,13 @@ export const applyActions = (state, loop, actions) => {
 				case 'pause':
 					if (!newState.snake.alive) {
 						newState = defaults
-						loop ()
 					} else {
 						const {pause} = newState
-						newState.pause = !pause
-						if (pause) loop ()
+						newState = {...newState, pause: !pause}
 					}
 					break
 				case 'restartGame':
 					newState = defaults
-					loop ()
 					break
 			}
 		}

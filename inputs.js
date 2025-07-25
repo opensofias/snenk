@@ -1,8 +1,10 @@
-import { defaults } from "./defaults.js"
+
 import { keyMap, gamepadMap } from "./keyMap.js"
 import { enqueue, queueTipPosition } from "./game.js"
-import { boostableActions } from "./actions.js"
+import { boostableActions, applyActions } from "./actions.js"
 import { majorAxis, minorAxis, euclideanDistance } from "./vectorUtils.js"
+import { canvas } from "./render.js"
+import { game } from "./main.js"
 
 export const handlePointer = (state, {
 	target: {clientWidth, clientHeight}, button, offsetX, offsetY
@@ -119,4 +121,57 @@ const discretizeLeftStick = (vec) => {
 	}
 	
 	return closestTarget
+}
+
+export const startInputListeners = () => {
+	onkeydown = (event) => {
+		const actions = handleKey(event)
+
+		debugger
+
+		if (actions.length) {
+			game.state = applyActions(game.state, actions)
+		}
+
+		
+	}
+
+	canvas.onpointerdown = (event) => {
+		game.state = handlePointer(game.state, event)
+	}
+
+	canvas.ondblclick = () => {
+		game.state = applyActions(game.state, ['pause'])
+	}
+
+	// Curried self-calling rAF loop
+	const gamepadLoop = (gamepadState = {buttons: [], axes: []}) => () => {
+		const gamepad = navigator.getGamepads()[0]
+
+		if (gamepad) {
+			let oldGamepadState = gamepadState
+			gamepadState = pollGamepad(gamepad)
+
+			const actions = handleGamepad(gamepadState, oldGamepadState)
+			
+			// Update cursor offset based on right stick
+			const {rStick} = gamepadState
+			let newState = game.state
+			if (rStick.eq([0, 0])) {
+				newState = {...newState, gamepadCursorOffset: null}
+			} else {
+				newState = {...newState, gamepadCursorOffset: rStick}
+			}
+		
+			// Only update state if it actually changed or cursor moved
+			if (actions.length || !rStick.eq(oldGamepadState.rStick || [0, 0])) {
+				game.state = applyActions(newState, actions)
+			} else if (newState !== game.state) {
+				game.state = newState
+			}
+		}
+		
+		requestAnimationFrame(gamepadLoop(gamepadState))
+	}
+	gamepadLoop()()
 }

@@ -1,67 +1,61 @@
 import { defaults } from "./defaults.js"
-import { canvas, render } from "./render.js"
+import { render } from "./render.js"
 import { step } from "./game.js"
 import {} from "https://opensofias.github.io/dimekit/dimekit.js"
 import {} from "https://opensofias.github.io/dimekit/vectorOps.js"
-import { handleKey, handlePointer, handleGamepad, pollGamepad } from "./inputs.js"
-import { applyActions } from "./actions.js"
+import { startInputListeners } from "./inputs.js"
 
 let gameState = defaults
+let loopTimeout = null
 
 const loop = () => {
-	if (gameState.pause) return;
+	if (gameState.pause) return
 
-	gameState = step (gameState)
-	render (gameState)
+	gameState = step(gameState)
+	render(gameState)
 
-	if (gameState.snake.alive) setTimeout (loop, gameState.stepTime)
-}
-
-onkeydown = (event) => {
-	const actions = handleKey(event)
-
-	if (actions.length) {
-		gameState = applyActions(gameState, loop, actions)
-		render(gameState)
+	if (gameState.snake.alive) {
+		loopTimeout = setTimeout(loop, gameState.stepTime)
 	}
 }
 
-canvas.onpointerdown = (event) => {
-	gameState = handlePointer (gameState, event)
-	render (gameState)
+const startLoop = () => {
+	if (loopTimeout) clearTimeout(loopTimeout)
+	loop()
 }
 
-canvas.ondblclick = () => {
-	gameState = applyActions (gameState, loop, ['pause'])
+const stopLoop = () => {
+	if (loopTimeout) {
+		clearTimeout(loopTimeout)
+		loopTimeout = null
+	}
 }
 
-// Curried self-calling rAF loop
-const gamepadLoop = (gamepadState = {buttons: [], axes: []}) => () => {
-	const gamepad = navigator.getGamepads()[0]
-
-	if (gamepad) {
-		let oldGamepadState = gamepadState
-		gamepadState = pollGamepad (gamepad)
-
-		const actions = handleGamepad (gamepadState, oldGamepadState)
+export const game = {
+	get state() {
+		return gameState
+	},
+	
+	set state(newState) {
+		const wasPaused = gameState.pause
+		gameState = newState
 		
-		// Update cursor offset based on right stick
-		const {rStick} = gamepadState
-		if (rStick.eq([0, 0])) {
-			gameState = {...gameState, gamepadCursorOffset: null}
-		} else {
-			gameState = {...gameState, gamepadCursorOffset: rStick}
+		// Handle pause state changes
+		if (wasPaused !== gameState.pause) {
+			if (gameState.pause) {
+				stopLoop()
+			} else {
+				startLoop()
+			}
 		}
+		
+		render(gameState)
+	},
 	
-		// Only render if state actually changed or cursor moved
-		if (actions.length || !rStick.eq(oldGamepadState.rStick || [0, 0])) {
-			gameState = applyActions (gameState, loop, actions)
-			render (gameState)
-		}
+	setState(newState) {
+		this.state = newState
 	}
-	
-	requestAnimationFrame(gamepadLoop(gamepadState))
 }
-gamepadLoop ()()
 
-loop ()
+startInputListeners()
+startLoop()
