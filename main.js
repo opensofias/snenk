@@ -6,7 +6,7 @@ import {} from "https://opensofias.github.io/dimekit/vectorOps.js"
 import { handleKey, handlePointer, handleGamepad, pollGamepad } from "./inputs.js"
 import { applyActions } from "./actions.js"
 
-let gameState = {...defaults, gamepadCursorOffset: null}
+let gameState = defaults
 
 const loop = () => {
 	if (gameState.pause) return;
@@ -14,7 +14,7 @@ const loop = () => {
 	gameState = step (gameState)
 	render (gameState)
 
-	if (gameState.snake.alive) setTimeout (loop, 1000/4)
+	if (gameState.snake.alive) setTimeout (loop, gameState.stepTime)
 }
 
 onkeydown = (event) => {

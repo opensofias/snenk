@@ -10,4 +10,5 @@ export const defaults = {
 	queue: [],
 	pause: false,
 	win: false,
+	stepTime: 1000 / 4,
 }
