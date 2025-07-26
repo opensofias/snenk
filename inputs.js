@@ -127,8 +127,6 @@ export const startInputListeners = () => {
 	onkeydown = (event) => {
 		const actions = handleKey(event)
 
-		debugger
-
 		if (actions.length) {
 			game.state = applyActions(game.state, actions)
 		}
