@@ -1,10 +1,10 @@
-
 import { keyMap, gamepadMap } from "./keyMap.js"
 import { enqueue, queueTipPosition } from "./game.js"
 import { boostableActions, applyActions } from "./actions.js"
 import { majorAxis, minorAxis, euclideanDistance } from "./vectorUtils.js"
 import { canvas } from "./render.js"
 import { game } from "./main.js"
+import { defaults } from "./defaults.js"
 
 export const handlePointer = (state, {
 	target: {clientWidth, clientHeight}, button, offsetX, offsetY
@@ -18,13 +18,13 @@ export const handlePointer = (state, {
 
 	const targetVector = (button != 1 ? majorAxis : minorAxis) (deltaVec)
 
-	return enqueue (state, targetVector)
+	return [targetVector]
 }
 
 export const handleKey = ({key, repeat: keyRepeat, ctrlKey, shiftKey}) => {
 	if (keyRepeat) return []
 	
-	const boost = shiftKey ? 4 : 1
+	const boost = shiftKey ? defaults.boostFactor : 1
 	const actions = []
 	
 	const action = ctrlKey && keyMap.Ctrl?. [key] ? 
@@ -48,8 +48,9 @@ export const pollGamepad = gamepad => ({
 export const handleGamepad = (gamepadState, oldGamepadState) => {
 	const actions = []
 	
-	// Calculate boost from left trigger
-	const boost = Math.floor ((gamepadState.buttons [6]?.value || 0) * 3) + 1
+	// Calculate boost from left trigger: lerp between 1 and boostFactor
+	const triggerValue = gamepadState.buttons[6]?.value || 0
+	const boost = 1 + triggerValue * (defaults.boostFactor - 1)
 	const leftBumper = gamepadState.buttons [4]?.pressed || false
 	
 	gamepadState.buttons.forEach ((button, index) => {
@@ -135,7 +136,7 @@ export const startInputListeners = () => {
 	}
 
 	canvas.onpointerdown = (event) => {
-		game.state = handlePointer(game.state, event)
+		game.state = applyActions(game.state, handlePointer(game.state, event))
 	}
 
 	canvas.ondblclick = () => {

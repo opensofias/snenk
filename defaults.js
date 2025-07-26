@@ -11,4 +11,13 @@ export const defaults = {
 	pause: false,
 	win: false,
 	stepTime: 1000 / 4,
+	boostFactor: 4,
+	colors: {
+		background: '#000',
+		snake: '#0f0',
+		snakeDead: '#888',
+		apple: '#f00',
+		queueMark: '#8f82',
+		gamepadCursor: '#fc08'
+	}
 }

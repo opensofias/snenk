@@ -8,17 +8,17 @@ document.body.appendChild(canvas)
 const ctx = canvas.getContext('2d')
 
 export const render = (state) => {
-	const {arena, snake, apple, gamepadCursorOffset} = state
-	ctx.fillStyle = '#000'
+	const {arena, snake, apple, gamepadCursorOffset, colors} = state
+	ctx.fillStyle = colors.background
 	ctx.fillRect (0, 0, ...arena)
-	ctx.fillStyle = snake.alive ? '#0f0' : '#888'
+	ctx.fillStyle = snake.alive ? colors.snake : colors.snakeDead
 	snake.segments.forEach (seg =>
 		ctx.fillRect (...seg, 1, 1)
 	)
-	ctx.fillStyle = '#f00'
+	ctx.fillStyle = colors.apple
 	ctx.fillRect (...apple, 1, 1)
 
-	ctx.fillStyle = '#8f82'
+	ctx.fillStyle = colors.queueMark
 	
 	let queueMark = state.snake.segments [0]
 	state.queue.forEach (queued => {
@@ -29,7 +29,7 @@ export const render = (state) => {
 	// Render gamepad cursor if present
 	if (gamepadCursorOffset) {
 		const gamepadCursor = queueTipPosition (state).add (gamepadCursorOffset)
-		ctx.fillStyle = '#fc08'
+		ctx.fillStyle = colors.gamepadCursor
 		ctx.fillRect (...gamepadCursor, 1, 1)
 	}
 
