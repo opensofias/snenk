@@ -1,4 +1,6 @@
-export const defaults = {
+import { initializeFreeCells } from "./game.js"
+
+const baseDefaults = {
 	snake: {
 		face: [1, 0],
 		segments: [[1, 0],[0, 0]],
@@ -21,3 +23,12 @@ export const defaults = {
 		gamepadCursor: '#fc08'
 	}
 }
+
+export const getInitialState = () => {
+	const state = {...baseDefaults}
+	state.freeCells = initializeFreeCells(state.arena, state.snake.segments)
+	return state
+}
+
+// For backwards compatibility, export defaults as the initial state
+export const defaults = getInitialState()

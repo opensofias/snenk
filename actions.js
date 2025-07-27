@@ -1,5 +1,5 @@
 import { step, enqueue } from "./game.js"
-import { defaults } from "./defaults.js"
+import { getInitialState } from "./defaults.js"
 import { majorAxis, minorAxis } from "./vectorUtils.js"
 
 export const boostableActions = new Set(['step', 'fullQueue', 'dequeue', 'clearQueue', 'enqueueRightStickMajor', 'enqueueRightStickMinor'])
@@ -39,14 +39,14 @@ export const applyActions = (state, actions) => {
 					break
 				case 'pause':
 					if (!newState.snake.alive) {
-						newState = defaults
+						newState = getInitialState()
 					} else {
 						const {pause} = newState
 						newState = {...newState, pause: !pause}
 					}
 					break
 				case 'restartGame':
-					newState = defaults
+					newState = getInitialState()
 					break
 			}
 		}

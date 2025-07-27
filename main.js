@@ -1,11 +1,11 @@
-import { defaults } from "./defaults.js"
-import { render } from "./render.js"
-import { step } from "./game.js"
 import {} from "https://opensofias.github.io/dimekit/dimekit.js"
 import {} from "https://opensofias.github.io/dimekit/vectorOps.js"
+import { getInitialState } from "./defaults.js"
+import { render } from "./render.js"
+import { step } from "./game.js"
 import { startInputListeners } from "./inputs.js"
 
-let gameState = defaults
+let gameState = getInitialState()
 let loopTimeout = null
 
 const loop = () => {
