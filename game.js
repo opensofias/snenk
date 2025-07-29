@@ -49,8 +49,9 @@ export const step = state => {
 	const target = segments [0].add (face)
 
 	alive &&= 
-		target.every ((pos, idx) => 0 <= pos && pos < arena [idx]) &&
-		segments.every (seg => !seg.eq (target))
+		target.every ((pos, idx) =>
+			0 <= pos && pos < arena [idx] // Test for wall collissions
+		) && segments.every (seg => !seg.eq (target)) // Test for self collision
 
 	// Check if apple eaten and increment grow
 	if (alive && target.eq (apple)) grow++
