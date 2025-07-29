@@ -36,7 +36,7 @@ export const queueTipDirection = state => {
 export const step = state => {
 	let {snake: {segments, face, alive, grow}, apple, arena, queue, win, freeCells} = state
 	
-
+	if (win && !alive) return state
 
 	if (segments.length > 1) {
 		const neck = segments [0].sclMul (-1).add (segments [1])
@@ -77,7 +77,7 @@ export const step = state => {
 	if (grow) grow --
 
 	// Check for win condition
-	if (segments.length >= arena [0] * arena [1]) {
+	if (freeCells.size <= 1) {
 		win = true
 		alert ('woah, nice!')
 	}
