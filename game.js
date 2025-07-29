@@ -34,8 +34,10 @@ export const queueTipDirection = state => {
 }
 
 export const step = state => {
-	let {snake: {segments, face, alive}, apple, arena, queue, win, freeCells} = state
+	let {snake: {segments, face, alive, grow}, apple, arena, queue, win, freeCells} = state
 	
+
+
 	if (segments.length > 1) {
 		const neck = segments [0].sclMul (-1).add (segments [1])
 		while (queue.length && queue [0].eq (neck))
@@ -50,14 +52,16 @@ export const step = state => {
 		target.every ((pos, idx) => 0 <= pos && pos < arena [idx]) &&
 		segments.every (seg => !seg.eq (target))
 
-	const eaten = alive && target.eq (apple)
+	// Check if apple eaten and increment grow
+	if (alive && target.eq (apple)) grow++
 	
 	// Get old tail before updating segments
 	const oldTail = segments[segments.length - 1]
 
-	segments = (!alive) ? segments :
-		eaten ? [target, ...segments] :
-			[target, ...segments].slice (0, -1)
+	segments =
+		(!alive) ? segments :
+		grow ? [target, ...segments] :
+		[target, ...segments].slice (0, -1)
 
 	// Update freeCells
 	if (alive) {
@@ -65,15 +69,20 @@ export const step = state => {
 		freeCells.delete(coordsToNum(target, arena[0]))
 		
 		// If snake didn't grow, add old tail back to free cells
-		if (!eaten) {
+		if (!grow) {
 			freeCells.add(coordsToNum(oldTail, arena[0]))
 		}
 	}
 
+	if (grow) grow --
+
 	// Check for win condition
-	if (segments.length == arena.reduce ((cur, pre) => cur * pre, 1))
-		win ||= (alert ('woah, nice!') || true)
-	else if (eaten || apple === null) {
+	if (segments.length >= arena [0] * arena [1]) {
+		win = true
+		alert ('woah, nice!')
+	}
+
+	if (!win && alive && target.eq (apple)) {
 		// Generate new apple using hybrid approach
 		apple = null
 		const phase1Attempts = Math.floor(Math.sqrt(arena[0] * arena[1]))
@@ -97,7 +106,7 @@ export const step = state => {
 
 	return {
 		...state, apple, win, freeCells,
-		snake: {segments, alive, face},
+		snake: {segments, alive, face, grow},
 		queue: queue.slice (1)
 	}
 }
