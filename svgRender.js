@@ -59,6 +59,21 @@ const generateSvgStyles = () => {
 			transition: none !important;
 		}
 	`)
+	// Generating directional snake segment shapes
+	for (const origin of ['top', 'bottom', 'left', 'right'])
+		for (const target of ['top', 'bottom', 'left', 'right']) {
+			if (origin == target) continue
+		
+			const edges = {
+				...{top: 7, bottom: 7, left: 7, right: 7, left: 7},
+				[origin]: 12,
+				[target]: 0,
+			}
+			
+			sheet.insertRule(
+				`[data-${target}-edge="-1"][data-${origin}-edge="1"]
+				{ d: path("M ${-edges.left} 0 L -6 6 L 0 ${edges.bottom} L 6 6 L ${edges.right} 0 L 6 -6 L 0 ${-edges.top} L -6 -6 Z"); }`)
+	}
 	
 	// Generate position attribute selectors for arena size
 	for (let x = 0; x < arena[0]; x++) {
@@ -96,6 +111,32 @@ const createGem = (className, x, y) => {
 	path.setAttribute('data-x', x)
 	path.setAttribute('data-y', y)
 	return path
+}
+
+// Helper to calculate direction vector between two positions
+const getDirectionVector = (from, to) => {
+	return [to[0] - from[0], to[1] - from[1]]
+}
+
+// Helper to set edge attributes based on direction vectors
+const setEdgeAttributes = (element, fromDir, toDir) => {
+	// Clear all edge attributes first
+	element.removeAttribute('data-left-edge')
+	element.removeAttribute('data-right-edge')
+	element.removeAttribute('data-top-edge')
+	element.removeAttribute('data-bottom-edge')
+	
+	// Set "from" direction as tail (1)
+	if (fromDir[0] === 1) element.setAttribute('data-right-edge', '1')  // came from right
+	else if (fromDir[0] === -1) element.setAttribute('data-left-edge', '1')   // came from left
+	if (fromDir[1] === 1) element.setAttribute('data-bottom-edge', '1') // came from bottom
+	else if (fromDir[1] === -1) element.setAttribute('data-top-edge', '1')    // came from top
+	
+	// Set "to" direction as mouth (-1)
+	if (toDir[0] === 1) element.setAttribute('data-right-edge', '-1')  // going right
+	else if (toDir[0] === -1) element.setAttribute('data-left-edge', '-1')   // going left
+	if (toDir[1] === 1) element.setAttribute('data-bottom-edge', '-1') // going down
+	else if (toDir[1] === -1) element.setAttribute('data-top-edge', '-1')    // going up
 }
 
 // Helper to update element position via data attributes
@@ -138,11 +179,38 @@ export const svgRender = (state) => {
 		snakeGroup.removeChild(element)
 	}
 	
-	// Update snake segment positions and colors
+	// Update snake segment positions, colors, and shapes
 	snake.segments.forEach((segment, idx) => {
 		const element = snakeElements[idx]
 		element.setAttribute('class', `gem ${aliveClass}`)
 		updatePosition(element, segment)
+		
+		// Calculate directional shape for this segment
+		let fromDir = [0, 0]  // Where this segment came from
+		let toDir = [0, 0]    // Where this segment is going
+		
+		if (idx === 0) {
+			// Head: going in face direction
+			toDir = [...snake.face]
+			if (snake.segments.length > 1) {
+				// Came from next segment
+				fromDir = getDirectionVector(segment, snake.segments[1])
+			}
+		} else if (idx === snake.segments.length - 1) {
+			// Tail: came from previous segment
+			toDir = getDirectionVector(segment, snake.segments[idx - 1])
+			// For tail, we need to know where it was going previously
+			// This is tricky - we'll use the direction from the previous segment for now
+			if (snake.segments.length > 1) {
+				fromDir = getDirectionVector(snake.segments[idx - 1], segment)
+			}
+		} else {
+			// Body: came from next segment, going to previous segment
+			fromDir = getDirectionVector(segment, snake.segments[idx + 1])
+			toDir = getDirectionVector(segment, snake.segments[idx - 1])
+		}
+		
+		setEdgeAttributes(element, fromDir, toDir)
 	})
 	
 	// Update queue marks - they should stay in place once created
