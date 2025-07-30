@@ -14,6 +14,7 @@ const baseDefaults = {
 	win: false,
 	stepTime: 1000 / 4,
 	boostFactor: 4,
+	render: 'pixel', // 'pixel' or 'svg'
 	colors: {
 		background: '#000',
 		snake: '#0f0',
