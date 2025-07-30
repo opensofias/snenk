@@ -1,9 +1,14 @@
-import { pixelRender, canvas } from "./pixelRender.js"
-// import { svgRender } from "./svgRender.js" // For future use
+import { pixelRender, canvas as pixelCanvas } from "./pixelRender.js"
+import { svgRender, canvas as svgCanvas } from "./svgRender.js"
 
 const renderers = {
 	pixel: pixelRender,
-	// svg: svgRender // For future use
+	svg: svgRender
+}
+
+const canvases = {
+	pixel: pixelCanvas,
+	svg: svgCanvas
 }
 
 export const render = (state) => {
@@ -11,5 +16,5 @@ export const render = (state) => {
 	return renderer(state)
 }
 
-// Export canvas for input handling (maintains compatibility)
-export { canvas }
+// Export appropriate canvas/svg for input handling
+export const canvas = (state) => canvases[state?.render] || canvases.pixel

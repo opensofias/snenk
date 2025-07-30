@@ -1,7 +1,7 @@
 import {} from "https://opensofias.github.io/dimekit/dimekit.js"
 import {} from "https://opensofias.github.io/dimekit/vectorOps.js"
 import { getInitialState } from "./defaults.js"
-import { render } from "./render.js"
+import { render, canvas } from "./render.js"
 import { step } from "./game.js"
 import { startInputListeners } from "./inputs.js"
 

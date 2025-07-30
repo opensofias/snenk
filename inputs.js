@@ -131,17 +131,23 @@ export const startInputListeners = () => {
 		if (actions.length) {
 			game.state = applyActions(game.state, actions)
 		}
+	}
 
+	// Set up pointer events on the current canvas/svg
+	const setupPointerEvents = () => {
+		const currentCanvas = canvas(game.state)
 		
+		currentCanvas.onpointerdown = (event) => {
+			game.state = applyActions(game.state, handlePointer(game.state, event))
+		}
+
+		currentCanvas.ondblclick = () => {
+			game.state = applyActions(game.state, ['pause'])
+		}
 	}
 
-	canvas.onpointerdown = (event) => {
-		game.state = applyActions(game.state, handlePointer(game.state, event))
-	}
-
-	canvas.ondblclick = () => {
-		game.state = applyActions(game.state, ['pause'])
-	}
+	// Initial setup
+	setupPointerEvents()
 
 	// Curried self-calling rAF loop
 	const gamepadLoop = (gamepadState = {buttons: [], axes: []}) => () => {
