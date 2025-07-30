@@ -23,8 +23,7 @@ export const applyActions = (state, actions) => {
 						newState = step (newState)
 					break
 				case 'dequeue':
-					newState = {
-						...newState, 
+					newState = {...newState,
 						queue: newState.queue.slice (0, -1)
 					}
 					break
@@ -38,12 +37,10 @@ export const applyActions = (state, actions) => {
 					newState = enqueueRightStickAxis (newState, false)
 					break
 				case 'pause':
-					if (!newState.snake.alive) {
+					if (!newState.snake.alive)
 						newState = getInitialState() // Restart if dead
-					} else {
-						const {pause} = newState
-						newState = {...newState, pause: !pause}
-					}
+					else
+						newState = {...newState, pause: !newState.pause}
 					break
 				case 'restartGame':
 					newState = getInitialState()
