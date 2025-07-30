@@ -39,7 +39,7 @@ export const applyActions = (state, actions) => {
 					break
 				case 'pause':
 					if (!newState.snake.alive) {
-						newState = getInitialState()
+						newState = getInitialState() // Restart if dead
 					} else {
 						const {pause} = newState
 						newState = {...newState, pause: !pause}

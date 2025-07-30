@@ -38,6 +38,7 @@ export const step = state => {
 	
 	if (win && !alive) return state
 
+	// Neck biting protection: Remove opposite directions from queue
 	if (segments.length > 1) {
 		const neck = segments [0].sclMul (-1).add (segments [1])
 		while (queue.length && queue [0].eq (neck))
@@ -60,9 +61,9 @@ export const step = state => {
 	const oldTail = segments[segments.length - 1]
 
 	segments =
-		(!alive) ? segments :
-		grow ? [target, ...segments] :
-		[target, ...segments].slice (0, -1)
+		(!alive) ? segments : // Dead snake doesn't move
+		grow ? [target, ...segments] : // Growing: add head, keep tail
+		[target, ...segments].slice (0, -1) // Normal: add head, remove tail
 
 	// Update freeCells
 	if (alive) {

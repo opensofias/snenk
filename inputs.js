@@ -103,10 +103,10 @@ const discretizeRightStick = (vec, factor = 4) =>
 const discretizeLeftStick = (vec) => {
 	const targets = [
 		[0, 0], //deadzone
-		[1, -2/3], [1, 0], [1, 2/3],
-		[2/3, 1], [0, 1], [-2/3, 1],
-		[-1, 2/3], [-1, 0], [-1, -2/3],
-		[-2/3, -1], [0, -1], [2/3, -1]
+		[1, -2/3], [1, 0], [1, 2/3], // right side
+		[2/3, 1], [0, 1], [-2/3, 1], // top side  
+		[-1, 2/3], [-1, 0], [-1, -2/3], // left side
+		[-2/3, -1], [0, -1], [2/3, -1] // bottom side
 	]
 	
 	// Find closest target by euclidean distance
