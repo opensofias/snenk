@@ -36,7 +36,7 @@ const generateDynamicStyles = () => {
 		if (origin == target) continue
 	
 		const edges = {
-			...directionNames.reduce ((acc, name) => ({[name]: 7, acc}), {}), //default magnitude
+			...directionNames.reduce ((acc, name) => ({[name]: 7, ...acc}), {}), // default maginitude
 			[origin]: 12,
 			[target]: 0,
 		}
