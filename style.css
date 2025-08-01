@@ -9,3 +9,33 @@ canvas {
 	width: 100vmin;
 	image-rendering: pixelated;
 }
+
+/* SVG styles */
+svg.playfield {
+	width: 100vmin;
+	height: 100vmin;
+	display: none;
+}
+
+/* Base sprite styling */
+.sprite {
+	pointer-events: none;
+	transition-timing-function: linear;
+	transform:
+		translate(
+			calc(var(--x) * 1px),
+			calc(var(--y) * 1px)
+		)
+		translate(.5px, .5px)
+		scale(calc(1/16 * var(--spriteZoom)))
+		rotate(calc(360deg * var(--spriteRot)))
+	;
+	--spriteRot: 0;
+	--spriteZoom: 1;
+	d: path('M-7,0 L-5,5 L0,7 L5,5 L7,0 L5,-5 L0,-7 L-5,-5 Z');
+}
+
+/* Queue marks should not transition */
+.queue-mark {
+	transition: none !important;
+}

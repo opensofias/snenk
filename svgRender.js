@@ -5,11 +5,6 @@ import { queueTipPosition } from "./game.js"
 export const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 svg.setAttribute('viewBox', `0 0 ${defaults.arena[0]} ${defaults.arena[1]}`)
 svg.setAttribute('class', 'playfield')
-svg.style.cssText = `
-	width: 100vmin;
-	height: 100vmin;
-	display: none;
-`
 
 // Create groups for different elements
 const snakeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -28,38 +23,18 @@ svg.appendChild(cursorGroup)
 
 document.body.appendChild(svg)
 
-// Generate CSS for positioning and styling
-const generateSvgStyles = () => {
+// Generate dynamic CSS for positioning, directional segments, and colors
+const generateDynamicStyles = () => {
 	const sheet = new CSSStyleSheet()
 	const {arena, colors, stepTime} = defaults
 	
-	// Base sprite shape and transitions (using stepTime for duration)
+	// Dynamic transition duration based on stepTime
 	sheet.insertRule(`
 		.sprite {
-			pointer-events: none;
 			transition-duration: ${stepTime}ms;
-			transition-timing-function: linear;
-			transform:
-				translate(
-					calc(var(--x) * 1px),
-					calc(var(--y) * 1px)
-				)
-				translate(.5px, .5px)
-				scale(calc(1/16 * var(--spriteZoom)))
-				rotate(calc(360deg * var(--spriteRot)))
-			;
-			--spriteRot: 0;
-			--spriteZoom: 1;
-			d: path('M-7,0 L-5,5 L0,7 L5,5 L7,0 L5,-5 L0,-7 L-5,-5 Z');
 		}
 	`)
 	
-	// Queue marks should not transition (stay in place)
-	sheet.insertRule(`
-		.queue-mark {
-			transition: none !important;
-		}
-	`)
 	// Generating directional snake segment shapes
 	for (const origin of ['top', 'bottom', 'left', 'right'])
 		for (const target of ['top', 'bottom', 'left', 'right']) {
@@ -84,16 +59,16 @@ const generateSvgStyles = () => {
 		sheet.insertRule(`[data-y="${y}"] { --y: ${y} }`)
 	}
 	
-	// Color classes
+	// Color classes based on game state
 	sheet.insertRule(`.snake-alive { fill: ${colors.snake} }`)
 	sheet.insertRule(`.snake-dead { fill: ${colors.snakeDead} }`)
 	sheet.insertRule(`.apple { fill: ${colors.apple} }`)
 	sheet.insertRule(`.queue-mark { fill: ${colors.queueMark} }`)
 	sheet.insertRule(`.gamepad-cursor { fill: ${colors.gamepadCursor} }`)
 	
-	// SVG styling
+	// SVG background color
 	sheet.insertRule(`
-		svg {
+		svg.playfield {
 			background: ${colors.background};
 		}
 	`)
@@ -102,8 +77,8 @@ const generateSvgStyles = () => {
 	return sheet
 }
 
-// Initialize styles
-generateSvgStyles()
+// Initialize dynamic styles
+generateDynamicStyles()
 
 // Helper to create sprite path element
 const createSprite = (className, x, y) => {
