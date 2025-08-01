@@ -91,22 +91,23 @@ const getDirectionVector = (from, to) => {
 
 // Helper to set edge attributes based on direction vectors
 const setEdgeAttributes = (element, fromDir, toDir) => {
-	// Clear all edge attributes first
-	for (const dir of directionNames)
-		element.removeAttribute(`data-${dir}-edge`)
-	
-	// Set "from" direction as tail (1)
-	if (fromDir[0] === 1) element.setAttribute('data-right-edge', '1')  // came from right
-	else if (fromDir[0] === -1) element.setAttribute('data-left-edge', '1')   // came from left
-	if (fromDir[1] === 1) element.setAttribute('data-bottom-edge', '1') // came from bottom
-	else if (fromDir[1] === -1) element.setAttribute('data-top-edge', '1')    // came from top
-	
-	// Set "to" direction as mouth (-1)
-	if (toDir[0] === 1) element.setAttribute('data-right-edge', '-1')  // going right
-	else if (toDir[0] === -1) element.setAttribute('data-left-edge', '-1')   // going left
-	if (toDir[1] === 1) element.setAttribute('data-bottom-edge', '-1') // going down
-	else if (toDir[1] === -1) element.setAttribute('data-top-edge', '-1')    // going up
-}
+	// Define the vectors
+	const vectors = {
+		top: [0, -1],
+		right: [1, 0],
+		bottom: [0, 1],
+		left: [-1, 0]
+	};
+
+	// Set attributes with a single loop
+	for (const dir of directionNames) {
+		element.setAttribute(
+			`data-${dir}-edge`,
+			fromDir.eq(vectors[dir]) ? 1 :
+			toDir.eq(vectors[dir]) ? -1 : 0
+		);
+	}
+};
 
 // Helper to update element position via data attributes
 const updatePosition = (element, [x, y]) => {
