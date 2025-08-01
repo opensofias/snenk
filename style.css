@@ -32,10 +32,14 @@ svg.playfield {
 	;
 	--spriteRot: 0;
 	--spriteZoom: 1;
-	d: path('M-7,0 L-5,5 L0,7 L5,5 L7,0 L5,-5 L0,-7 L-5,-5 Z');
+	d: path('M-6,0 L0,6 L6,0 L0,-6 Z');
 }
 
 /* Queue marks should not transition */
 .queue-mark {
 	transition: none !important;
+}
+
+.apple {
+	d: path('M-7,0 L-5,5 L0,7 L5,5 L7,0 L5,-5 L0,-7 L-5,-5 Z');
 }
