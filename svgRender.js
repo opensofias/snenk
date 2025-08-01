@@ -36,6 +36,7 @@ const generateSvgStyles = () => {
 	// Base gem shape and transitions (using stepTime for duration)
 	sheet.insertRule(`
 		.gem {
+			pointer-events: none;
 			transition-duration: ${stepTime}ms;
 			transition-timing-function: linear;
 			transform:
