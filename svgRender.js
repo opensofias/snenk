@@ -33,9 +33,9 @@ const generateSvgStyles = () => {
 	const sheet = new CSSStyleSheet()
 	const {arena, colors, stepTime} = defaults
 	
-	// Base gem shape and transitions (using stepTime for duration)
+	// Base sprite shape and transitions (using stepTime for duration)
 	sheet.insertRule(`
-		.gem {
+		.sprite {
 			pointer-events: none;
 			transition-duration: ${stepTime}ms;
 			transition-timing-function: linear;
@@ -45,11 +45,11 @@ const generateSvgStyles = () => {
 					calc(var(--y) * 1px)
 				)
 				translate(.5px, .5px)
-				scale(calc(1/16 * var(--gemZoom)))
-				rotate(calc(360deg * var(--gemRot)))
+				scale(calc(1/16 * var(--spriteZoom)))
+				rotate(calc(360deg * var(--spriteRot)))
 			;
-			--gemRot: 0;
-			--gemZoom: 1;
+			--spriteRot: 0;
+			--spriteZoom: 1;
 			d: path('M-7,0 L-5,5 L0,7 L5,5 L7,0 L5,-5 L0,-7 L-5,-5 Z');
 		}
 	`)
@@ -105,10 +105,10 @@ const generateSvgStyles = () => {
 // Initialize styles
 generateSvgStyles()
 
-// Helper to create gem path element
-const createGem = (className, x, y) => {
+// Helper to create sprite path element
+const createSprite = (className, x, y) => {
 	const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-	path.setAttribute('class', `gem ${className}`)
+	path.setAttribute('class', `sprite ${className}`)
 	path.setAttribute('data-x', x)
 	path.setAttribute('data-y', y)
 	return path
@@ -169,7 +169,7 @@ export const svgRender = (state) => {
 	
 	// Add new snake segments if needed
 	while (snakeElements.length < snake.segments.length) {
-		const segment = createGem(aliveClass, 0, 0)
+		const segment = createSprite(aliveClass, 0, 0)
 		snakeElements.push(segment)
 		snakeGroup.appendChild(segment)
 	}
@@ -183,7 +183,7 @@ export const svgRender = (state) => {
 	// Update snake segment positions, colors, and shapes
 	snake.segments.forEach((segment, idx) => {
 		const element = snakeElements[idx]
-		element.setAttribute('class', `gem ${aliveClass}`)
+		element.setAttribute('class', `sprite ${aliveClass}`)
 		updatePosition(element, segment)
 		
 		// Calculate directional shape for this segment
@@ -230,14 +230,14 @@ export const svgRender = (state) => {
 	// Add new queue elements at the end
 	while (queueElements.length < queuePositions.length) {
 		const newPosition = queuePositions[queueElements.length]
-		const mark = createGem('queue-mark', newPosition[0], newPosition[1])
+		const mark = createSprite('queue-mark', newPosition[0], newPosition[1])
 		queueElements.push(mark)
 		queueGroup.appendChild(mark)
 	}
 	
 	// Update apple
 	if (!appleElement) {
-		appleElement = createGem('apple', 0, 0)
+		appleElement = createSprite('apple', 0, 0)
 		appleGroup.appendChild(appleElement)
 	}
 	updatePosition(appleElement, apple)
@@ -248,7 +248,7 @@ export const svgRender = (state) => {
 		
 		if (!cursorElement) {
 			cursorElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-			cursorElement.setAttribute('class', 'gem gamepad-cursor')
+			cursorElement.setAttribute('class', 'sprite gamepad-cursor')
 			cursorGroup.appendChild(cursorElement)
 		}
 		
