@@ -6,20 +6,14 @@ export const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 svg.setAttribute('viewBox', `0 0 ${defaults.arena[0]} ${defaults.arena[1]}`)
 svg.setAttribute('class', 'playfield')
 
-// Create groups for different elements
-const snakeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-snakeGroup.setAttribute('class', 'snake-group')
-const queueGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-queueGroup.setAttribute('class', 'queue-group')
-const appleGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-appleGroup.setAttribute('class', 'apple-group')
-const cursorGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-cursorGroup.setAttribute('class', 'cursor-group')
-
-svg.appendChild(snakeGroup)
-svg.appendChild(queueGroup)
-svg.appendChild(appleGroup)
-svg.appendChild(cursorGroup)
+// Create svg groups for different elements, wrapped in one container object
+const groups = 
+	['snake', 'queue', 'apple', 'cursor'].reduce ((acc, name) => {
+		const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+		group.setAttribute('class', name)
+		svg.appendChild (group)
+		return {...acc, [name]: group}
+	}, {}) // empty object as starting value
 
 document.body.appendChild(svg)
 
@@ -146,13 +140,13 @@ export const svgRender = (state) => {
 	while (snakeElements.length < snake.segments.length) {
 		const segment = createSprite(aliveClass, 0, 0)
 		snakeElements.push(segment)
-		snakeGroup.appendChild(segment)
+		groups.snake.appendChild(segment)
 	}
 	
 	// Remove excess snake segments if needed
 	while (snakeElements.length > snake.segments.length) {
 		const element = snakeElements.pop()
-		snakeGroup.removeChild(element)
+		groups.snake.removeChild(element)
 	}
 	
 	// Update snake segment positions, colors, and shapes
@@ -199,7 +193,7 @@ export const svgRender = (state) => {
 	// Remove consumed queue elements from front
 	while (queueElements.length > queuePositions.length) {
 		const element = queueElements.shift() // Remove from front (FIFO)
-		queueGroup.removeChild(element)
+		groups.queue.removeChild(element)
 	}
 	
 	// Add new queue elements at the end
@@ -207,13 +201,13 @@ export const svgRender = (state) => {
 		const newPosition = queuePositions[queueElements.length]
 		const mark = createSprite('queue-mark', newPosition[0], newPosition[1])
 		queueElements.push(mark)
-		queueGroup.appendChild(mark)
+		groups.queue.appendChild(mark)
 	}
 	
 	// Update apple
 	if (!appleElement) {
 		appleElement = createSprite('apple', 0, 0)
-		appleGroup.appendChild(appleElement)
+		groups.apple.appendChild(appleElement)
 	}
 	updatePosition(appleElement, apple)
 	
@@ -224,13 +218,13 @@ export const svgRender = (state) => {
 		if (!cursorElement) {
 			cursorElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
 			cursorElement.setAttribute('class', 'sprite gamepad-cursor')
-			cursorGroup.appendChild(cursorElement)
+			groups.cursor.appendChild(cursorElement)
 		}
 		
 		// Use inline style for fractional positioning
 		updateInlinePosition(cursorElement, cursorPos)
 	} else if (cursorElement) {
-		cursorGroup.removeChild(cursorElement)
+		groups.cursor.removeChild(cursorElement)
 		cursorElement = null
 	}
 	
