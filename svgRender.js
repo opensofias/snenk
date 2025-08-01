@@ -17,6 +17,8 @@ const groups =
 
 document.body.appendChild(svg)
 
+const directionNames = ['top', 'right', 'bottom', 'left']
+
 // Generate dynamic CSS for positioning, directional segments, and colors
 const generateDynamicStyles = () => {
 	const sheet = new CSSStyleSheet()
@@ -30,19 +32,18 @@ const generateDynamicStyles = () => {
 	`)
 	
 	// Generating directional snake segment shapes
-	for (const origin of ['top', 'bottom', 'left', 'right'])
-		for (const target of ['top', 'bottom', 'left', 'right']) {
-			if (origin == target) continue
+	for (const origin of directionNames) for (const target of directionNames) {
+		if (origin == target) continue
+	
+		const edges = {
+			...{top: 7, bottom: 7, left: 7, right: 7, left: 7},
+			[origin]: 12,
+			[target]: 0,
+		}
 		
-			const edges = {
-				...{top: 7, bottom: 7, left: 7, right: 7, left: 7},
-				[origin]: 12,
-				[target]: 0,
-			}
-			
-			sheet.insertRule(
-				`[data-${target}-edge="-1"][data-${origin}-edge="1"]
-				{ d: path("M ${-edges.left} 0 L -6 6 L 0 ${edges.bottom} L 6 6 L ${edges.right} 0 L 6 -6 L 0 ${-edges.top} L -6 -6 Z"); }`)
+		sheet.insertRule(
+			`[data-${target}-edge="-1"][data-${origin}-edge="1"]
+			{ d: path("M ${-edges.left} 0 L -6 6 L 0 ${edges.bottom} L 6 6 L ${edges.right} 0 L 6 -6 L 0 ${-edges.top} L -6 -6 Z"); }`)
 	}
 	
 	// Generate position attribute selectors for arena size
@@ -91,10 +92,8 @@ const getDirectionVector = (from, to) => {
 // Helper to set edge attributes based on direction vectors
 const setEdgeAttributes = (element, fromDir, toDir) => {
 	// Clear all edge attributes first
-	element.removeAttribute('data-left-edge')
-	element.removeAttribute('data-right-edge')
-	element.removeAttribute('data-top-edge')
-	element.removeAttribute('data-bottom-edge')
+	for (const dir of directionNames)
+		element.removeAttribute(`data-${dir}-edge`)
 	
 	// Set "from" direction as tail (1)
 	if (fromDir[0] === 1) element.setAttribute('data-right-edge', '1')  // came from right
